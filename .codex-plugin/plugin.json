@@ -34,7 +34,7 @@
     "defaultPrompt": [
       "List my Voice Logica agents"
     ],
-    "brandColor": "#4F46E5",
-    "logo": "./assets/logo.svg"
+    "brandColor": "#2563EB",
+    "logo": "./assets/logo.png"
   }
 }

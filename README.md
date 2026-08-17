@@ -87,4 +87,11 @@ Same folder, three submissions. Listing on one store does not list you on the ot
     skills/manage-company-billing           Companies, plans, operating hours
     skills/create-support-ticket            File a ticket in the Voice Logica app
     skills/use-voice-logica-mcp             Full public MCP tool catalog
-    assets/logo.svg
+    assets/favicon.png            Marketplace icon (official)
+    assets/logo.png               Wordmark
+    assets/logo.svg               Fallback mark
+
+## Brand
+
+Official icon: https://www.voicelogica.ai/images/setup/voice-logica-logo-site-favicon.png
+Wordmark: https://app.voicelogica.ai/assets/logo.png

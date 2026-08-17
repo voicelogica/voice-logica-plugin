@@ -27,5 +27,6 @@
       "sensitive": true,
       "required": true
     }
-  }
+  },
+  "logo": "assets/favicon.png"
 }

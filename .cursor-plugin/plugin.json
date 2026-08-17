@@ -19,7 +19,7 @@
     "integrations",
     "tickets"
   ],
-  "logo": "assets/logo.svg",
+  "logo": "assets/favicon.png",
   "variables": {
     "type": "object",
     "properties": {

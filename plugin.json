@@ -18,5 +18,6 @@
     "sms",
     "integrations",
     "tickets"
-  ]
+  ],
+  "logo": "assets/favicon.png"
 }
