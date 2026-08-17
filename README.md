@@ -64,6 +64,7 @@ Same folder, three submissions. Listing on one store does not list you on the ot
 
 ## Layout
 
+    gemini-extension.json        Gemini CLI gallery manifest
     plugin.json                 Agent Plugins (portable)
     mcp.json                    Cursor + Agent Plugins MCP
     .mcp.json                   Claude Code + Codex MCP
