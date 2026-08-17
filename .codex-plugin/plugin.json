@@ -1,0 +1,40 @@
+{
+  "name": "voice-logica",
+  "version": "1.0.0",
+  "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets from ChatGPT and Codex.",
+  "author": {
+    "name": "Voice Logica",
+    "email": "support@voicelogica.ai",
+    "url": "https://voicelogica.ai"
+  },
+  "homepage": "https://voicelogica.ai",
+  "license": "MIT",
+  "keywords": [
+    "voice",
+    "agents",
+    "voip",
+    "mcp",
+    "sms",
+    "integrations",
+    "tickets"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Voice Logica",
+    "shortDescription": "Edit AI voice agents, phones, calls, and billing",
+    "longDescription": "Connect ChatGPT and Codex to your Voice Logica account at https://app.voicelogica.ai. Support: support@voicelogica.ai.",
+    "developerName": "Voice Logica",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://voicelogica.ai",
+    "defaultPrompt": [
+      "List my Voice Logica agents"
+    ],
+    "brandColor": "#4F46E5",
+    "logo": "./assets/logo.svg"
+  }
+}

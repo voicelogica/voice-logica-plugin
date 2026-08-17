@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "voice-logica",
+  "version": "1.0.0",
+  "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets from your coding agent.",
+  "author": {
+    "name": "Voice Logica",
+    "email": "support@voicelogica.ai",
+    "url": "https://voicelogica.ai"
+  },
+  "homepage": "https://voicelogica.ai",
+  "license": "MIT",
+  "keywords": [
+    "voice",
+    "agents",
+    "voip",
+    "mcp",
+    "sms",
+    "integrations",
+    "tickets"
+  ]
+}

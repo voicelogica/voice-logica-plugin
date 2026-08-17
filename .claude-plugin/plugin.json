@@ -1,0 +1,31 @@
+{
+  "name": "voice-logica",
+  "displayName": "Voice Logica",
+  "version": "1.0.0",
+  "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets from Claude Code.",
+  "author": {
+    "name": "Voice Logica",
+    "email": "support@voicelogica.ai",
+    "url": "https://voicelogica.ai"
+  },
+  "homepage": "https://voicelogica.ai",
+  "license": "MIT",
+  "keywords": [
+    "voice",
+    "agents",
+    "voip",
+    "mcp",
+    "sms",
+    "integrations",
+    "tickets"
+  ],
+  "userConfig": {
+    "VOICE_LOGICA_API_KEY": {
+      "type": "string",
+      "title": "Voice Logica API key",
+      "description": "From https://app.voicelogica.ai Settings, then API Keys",
+      "sensitive": true,
+      "required": true
+    }
+  }
+}
