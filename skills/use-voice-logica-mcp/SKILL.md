@@ -5,7 +5,7 @@ description: Master catalog of every Voice Logica MCP tool, grouped by job, with
 
 # What a user can do with the Voice Logica MCP
 
-This is the full public catalog. Confirm the MCP is connected (Connect / OAuth to https://app.voicelogica.ai; API key only if the client has no Connect flow), list agents if the job is about an agent, then open the specialist skill. Do not invent IDs or fields.
+This is the full public catalog. Confirm the MCP is connected (Connect / OAuth to https://app.voicelogica.ai; API key only if the client has no Connect flow), list agents if the job is about an agent, then open the specialist skill. Do not invent IDs, fields, or MCP tool names.
 
 Never commit or paste live API keys, OAuth tokens, or sender tokens into chat or git.
 
@@ -14,10 +14,11 @@ Never commit or paste live API keys, OAuth tokens, or sender tokens into chat or
 | Job | Skill |
 | --- | --- |
 | Not sure / list agents first | `manage-voice-agents` |
+| Create / build a new agent | `edit-voice-agents` |
 | Edit prompt, languages, transfers, knowledge | `edit-voice-agents` |
 | Call behavior went wrong | `fix-agent-behavior` |
 | Diagnose with a Call ID | `troubleshoot-voice-agents` |
-| DIDs, SIP, inbound numbers | `manage-phones` |
+| DIDs, SIP, inbound numbers, edge devices | `manage-phones` |
 | Connect any integration | `manage-integrations` |
 | HubSpot / Zoho / Salesforce | `manage-crm` |
 | Woo, Shopify, other shops | `manage-ecommerce` |
@@ -50,17 +51,23 @@ Skill: `edit-voice-agents` (behavior: `fix-agent-behavior`).
 - `get_agent_workflows` / `update_agent_workflows`
 - `create_customer_instructions` / `get_customer_instructions` / `update_customer_instructions` (admin)
 
+`update_agent_transfer_settings` **replaces** `transferSettings` — `get_` first and resend every field. `update_agent_analysis_config` **replaces** `analysisProperties` the same way.
+
+Prompt/analysis variables are **flat** (`{{phone_number}}`, `{{booked}}`). Workflow variables are **`call.`-prefixed**. `analysisPrompt` is interpolated. See `edit-voice-agents`.
+
 ### Agent tools (`list_agent_tools` / `update_agent_tool`)
 
-These are tools the **voice agent** may run on a call, not MCP tools:
+These are tools the **voice agent** may run on a call, not MCP tools. Always read the live list. Do not invent names.
 
-`skip_turn`, `send_sms`, `navigate_ivr`, `schedule_callback`, `detect_live_sentiment`, `detect_live_frustration`, `schedule_appointment`, `handle_silence`, `lock_on_speaker`, `eshop_integration`, `hubspot`
+Documented names you may see:
 
-`schedule_appointment` uses Google Calendar. `eshop_integration` is `manage-ecommerce`. `hubspot` is `manage-crm`. `send_sms` needs a `senderId` (`manage-sms`).
+`skip_turn` (`timeoutSeconds` 1–10), `send_sms` (needs `senderId`), `navigate_ivr`, `schedule_callback`, `detect_live_sentiment`, `detect_live_frustration`, `schedule_appointment` (Google Calendar), `handle_silence`, `lock_on_speaker` (echo), `eshop_integration` / shop-specific (`woocommerce`, `shopify`, `opencart`, `magento`, `megasoft`, `custom_api`), `hubspot` / `zoho` / `salesforce`, ERP (`soft1_erp`, `galaxy_drugstore`, `galaxy_erp`, `pylon_erp`, `entersoft_one`), `helpdesk`, `jira`, `clickup`, `airtable`, `guesty`, `hosthub`, `webhotelier`, `courier`, `outlook`
+
+`schedule_appointment` uses Google Calendar. Shop tools are `manage-ecommerce`. CRM tools are `manage-crm`. `send_sms` needs a `senderId` (`manage-sms`). PrestaShop and Trello often have no voice-agent tool.
 
 ## Phones and edge devices
 
-Skill: `manage-phones`. Private PBX: `manage-integrations` (Edge Devices, WireGuard UDP 51820).
+Skill: `manage-phones`. Private PBX: Edge Devices, WireGuard UDP 51820. Health = Online **and** Tunnel up **and** PBX reachable.
 
 - `get_voip_phones` / `create_voip_phone` / `update_voip_phone` / `delete_voip_phone`
 - `activate_voip_phone` / `deactivate_voip_phone`
@@ -89,7 +96,7 @@ Skill: `manage-calls-campaigns`. `toolCalls[].succeeded` is a transcript judge, 
 
 ## Workflows
 
-Skill: `manage-workflows`. `apiCall` `headers` / `params` are lists of `{key, value}`. Query params go in `params`, not `queryParams`.
+Skill: `manage-workflows`. `apiCall` `headers` / `params` are lists of `{key, value}`. Query params go in `params`, not `queryParams`. Body is a raw JSON string plus `bodyType`.
 
 - `list_workflows` / `get_workflow` / `get_workflows`
 - `create_workflow` / `update_workflow` / `delete_workflow`
@@ -150,7 +157,7 @@ Skill: `manage-company-billing`. `companyId` override is admin/reseller only. No
 - `get_user_companies_by_email`
 - `get_associate` / `update_associate`
 
-Operating hours: `closedAllWeek` closes the week; an empty array errors. `syncWithGoogle` needs a linked Google Place.
+Operating hours: `closedAllWeek` closes the week; an empty array errors. `syncWithGoogle` needs a linked Google Place. `seconds: 0` rejects calls as busy.
 
 ## MCP settings
 
@@ -166,4 +173,4 @@ Connect the integration → enable the agent tool → test with a Call ID. See `
 
 Not self-serve: Odoo, Monday.com, WhatsApp. Splynx is admin-only.
 
-Private HTTP ERP → Tunnels (SSH). Private PBX SIP/RTP → Phones → Edge Devices (WireGuard UDP 51820).
+Private HTTP ERP → Tunnels (SSH, admin menu). Private PBX SIP/RTP → Phones → Edge Devices (WireGuard UDP 51820).

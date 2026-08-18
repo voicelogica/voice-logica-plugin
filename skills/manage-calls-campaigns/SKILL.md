@@ -22,6 +22,14 @@ Use Call IDs. Do not invent them. Do not chase model or temperature first — th
 
 Default list window: last 7 days unless the user asked for another range. Summarize outcome, duration, and agent.
 
+## Recordings and history
+
+- Attended-transfer outbound legs may have a transcript but **no full recording**.
+- Very short / never-established calls may lack usable audio.
+- Calls that stay "open" may not finalize recording/transcript until hangup.
+- There is no archive feature. Use **seen / unseen** (and Unseen only).
+- Filters customers care about: unseen, date range, agent, direction, phone / Call ID.
+
 ## Scenario MCP tools
 
 - `create_agent_scenario` / `list_agent_scenarios` / `get_agent_scenario`
@@ -31,6 +39,8 @@ Default list window: last 7 days unless the user asked for another range. Summar
 - `stop_agent_scenario_suite`
 - `get_agent_scenario_results`
 - `apply_scenario_improvements` / `dismiss_scenario_improvements`
+
+Tests / scenarios tab is admin, super-admin, or account-manager.
 
 ## Scenario judge is not runtime truth
 
@@ -46,13 +56,31 @@ When a scenario says a tool failed:
 
 Do not conclude a workflow or CRM write failed from a scenario field alone. Do not apply scenario improvements without showing the user what they change.
 
+## Outbound campaigns
+
+Needs: configured agent, phone list, campaign settings, a SIP / DID (`manage-phones`), AI minutes **and** provider telephony credits. Outbound tab is plan-gated (`allow-outbound-calls`).
+
+Each cloned outbound agent needs its **own SIP extension** (or port). They share the company minute pool.
+
+Typical settings: call schedule, max duration, min duration (filter short rejects from reports), retry. Outbound prompts should identify the purpose immediately and ask if it is a good time.
+
+`initiate_call` / `initiate_bulk_calls` after confirming the agent and caller ID / phone.
+
+**AI minutes vs provider credits.** No provider credits = no PSTN outbound, regardless of plan. For Yuboto wallet top-up, send only https://services.yuboto.com/mynumber/ and support@yuboto-telephony.gr.
+
+**Sheet dates (if the campaign reads a Google Sheet).** A US-locale sheet parses `M/D/Y`. Greek clients type `D/M/Y`, so `7/8/2026` becomes 8 July. Confirm by looking at a platform-written column such as `called_at`. Fix both halves: set the sheet locale **and** tell the user to stop entering dates reversed. Static welcome dates (`phoneFirstMessageAiGenerated: false`) are spoken verbatim — feed a spoken-form column, do not expect the pronunciation guide to fix a changing date.
+
+Do not set a caller ID the user does not own. Do not invent a staff email or a Yuboto-side assignment procedure. If they want their own number shown and MCP cannot do it, say Voice Logica / their telephony provider must permit that caller ID on the trunk, **and** the campaign must select it — an unpermitted value **silently falls back** to the default number.
+
+Respect quiet hours, consent, and local outbound laws. Start with a small list.
+
 ## Common jobs
 
 **"What happened on this call?"**
-Take the Call ID. `get_full_call` + `get_call_logs`. Use `get_sip_logs` for one-way audio, no-answer, or registration issues. Open `troubleshoot-voice-agents` if it is a diagnosis.
+Take the Call ID. `get_full_call` + `get_call_logs`. Use `get_sip_logs` for one-way audio, no-answer, or registration issues. Open `troubleshoot-voice-agents` if it is a diagnosis. Zero Call IDs in the window → traffic never reached Voice Logica (`manage-phones`).
 
 **"Call this number now / start a campaign."**
-Confirm the agent and caller ID / phone first (`manage-phones`). Then `initiate_call` or `initiate_bulk_calls`. For later, use scheduled calls and `get_scheduled_calls`.
+Confirm the agent and caller ID / phone first (`manage-phones`). Confirm `get_subscription` has seconds remaining (0 seconds = busy, not a SIP fault). Then `initiate_call` or `initiate_bulk_calls`. For later, use scheduled calls and `get_scheduled_calls`.
 
 **"Cancel scheduled outbound."**
 `get_scheduled_calls`, match the batch, then `cancel_scheduled_calls`. Confirm how many were cancelled.
