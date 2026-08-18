@@ -1,19 +1,10 @@
-{
+﻿{
   "name": "voice-logica",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets.",
-  "settings": [
-    {
-      "name": "Voice Logica API key",
-      "description": "From https://app.voicelogica.ai Settings, then API Keys. Never commit this key.",
-      "envVar": "VOICE_LOGICA_API_KEY",
-      "sensitive": true
-    }
-  ],
   "mcpServers": {
     "voice-logica": {
-      "command": "npx",
-      "args": ["-y", "@voicelogica/mcp-server"]
+      "httpUrl": "https://api.voicelogica.ai/api/v1/mcp"
     }
   }
 }

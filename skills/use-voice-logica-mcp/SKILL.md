@@ -5,7 +5,7 @@ description: Master catalog of every Voice Logica MCP tool, grouped by job, with
 
 # What a user can do with the Voice Logica MCP
 
-This is the full public catalog. Confirm the MCP is connected (`VOICE_LOGICA_API_KEY` from Settings → API Keys), list agents if the job is about an agent, then open the specialist skill. Do not invent IDs or fields.
+This is the full public catalog. Confirm the MCP is connected (Connect / OAuth to https://app.voicelogica.ai; API key only if the client has no Connect flow), list agents if the job is about an agent, then open the specialist skill. Do not invent IDs or fields.
 
 Never commit or paste live API keys, OAuth tokens, or sender tokens into chat or git.
 

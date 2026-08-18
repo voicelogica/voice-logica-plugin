@@ -1,7 +1,7 @@
-{
+﻿{
   "name": "voice-logica",
   "displayName": "Voice Logica",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets from Claude Code.",
   "author": {
     "name": "Voice Logica",
@@ -19,14 +19,5 @@
     "integrations",
     "tickets"
   ],
-  "userConfig": {
-    "VOICE_LOGICA_API_KEY": {
-      "type": "string",
-      "title": "Voice Logica API key",
-      "description": "From https://app.voicelogica.ai Settings, then API Keys",
-      "sensitive": true,
-      "required": true
-    }
-  },
   "logo": "assets/favicon.png"
 }

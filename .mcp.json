@@ -1,14 +1,7 @@
-{
+﻿{
   "mcpServers": {
     "voice-logica": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@voicelogica/mcp-server"
-      ],
-      "env": {
-        "VOICE_LOGICA_API_KEY": "${user_config.VOICE_LOGICA_API_KEY}"
-      }
+      "url": "https://api.voicelogica.ai/api/v1/mcp"
     }
   }
 }

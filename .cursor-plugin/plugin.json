@@ -1,7 +1,7 @@
-{
+﻿{
   "name": "voice-logica",
   "displayName": "Voice Logica",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets from Cursor.",
   "author": {
     "name": "Voice Logica",
@@ -19,18 +19,5 @@
     "integrations",
     "tickets"
   ],
-  "logo": "assets/favicon.png",
-  "variables": {
-    "type": "object",
-    "properties": {
-      "VOICE_LOGICA_API_KEY": {
-        "type": "string",
-        "title": "Voice Logica API key",
-        "description": "From https://app.voicelogica.ai Settings, then API Keys"
-      }
-    },
-    "required": [
-      "VOICE_LOGICA_API_KEY"
-    ]
-  }
+  "logo": "assets/favicon.png"
 }

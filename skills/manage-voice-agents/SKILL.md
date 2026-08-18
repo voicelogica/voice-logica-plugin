@@ -1,4 +1,4 @@
----
+﻿---
 name: manage-voice-agents
 description: Route Voice Logica work to the right specialist skill after confirming MCP is connected and listing agents. Use when the user wants to work with agents, phones, integrations, calls, billing, tickets, or is unsure which Voice Logica skill to use.
 ---
@@ -9,7 +9,7 @@ Use the Voice Logica MCP. Do not invent agent IDs, phone numbers, or API fields.
 
 ## Before anything else
 
-1. Confirm the MCP is connected. If tools fail with a missing API key, tell the user to set `VOICE_LOGICA_API_KEY` from the Voice Logica dashboard (Settings, then API Keys).
+1. Confirm the MCP is connected. If tools fail because MCP is not connected, tell the user to Connect Voice Logica MCP (OAuth to https://app.voicelogica.ai). Use an API key only if the client has no Connect flow.
 2. List current agents first when the user names an agent. Match by name, then use the real ID.
 3. Open the specialist skill for the job. Do not do a deep edit, diagnosis, or integration change from this router.
 
@@ -35,3 +35,4 @@ Use the Voice Logica MCP. Do not invent agent IDs, phone numbers, or API fields.
 ## Style
 
 Speak in the user language. Keep replies short. After a write, confirm what changed.
+

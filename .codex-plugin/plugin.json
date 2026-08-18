@@ -1,6 +1,6 @@
-{
+﻿{
   "name": "voice-logica",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets from ChatGPT and Codex.",
   "author": {
     "name": "Voice Logica",
@@ -38,3 +38,4 @@
     "logo": "./assets/logo.png"
   }
 }
+

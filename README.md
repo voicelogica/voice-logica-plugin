@@ -1,8 +1,8 @@
 # Voice Logica plugin
 
-One plugin folder for Cursor, Claude Code, ChatGPT, and Codex. Users install it, add a Voice Logica API key, and can manage AI voice agents, phones, integrations, workflows, calls, and billing from chat.
+One plugin folder for Cursor, Claude Code, ChatGPT, Codex, Gemini CLI, and Grok. Users install it, click Connect, and sign in at Voice Logica. After that they can manage AI voice agents, phones, integrations, workflows, calls, and billing from chat.
 
-This is not the Voice Logica backend. It wraps the public MCP package @voicelogica/mcp-server.
+The default MCP is the hosted endpoint at https://api.voicelogica.ai/api/v1/mcp. Clients that support OAuth open a Connect flow to https://app.voicelogica.ai. This is not the Voice Logica backend.
 
 ## What users can do
 
@@ -28,11 +28,23 @@ Example prompts: list my agents, update the Support Bot greeting, connect HubSpo
 
 Voice Logica. Website: https://voicelogica.ai. App: https://app.voicelogica.ai. Support: support@voicelogica.ai.
 
-## Get an API key
+Privacy: https://legal.voicelogica.ai/privacy. Terms: https://legal.voicelogica.ai/terms.
+
+## Connect
+
+1. Install the plugin
+2. Click Connect on the Voice Logica MCP
+3. Sign in at https://app.voicelogica.ai
+
+No API key is required when the client supports OAuth.
+
+### Fallback for clients without Connect
+
+Some local/stdio clients cannot open a browser. For those only:
 
 1. Sign in at https://app.voicelogica.ai
 2. Open Settings, then API Keys
-3. Create a key and paste it when the plugin asks
+3. Run `npx -y @voicelogica/mcp-server` with `VOICE_LOGICA_API_KEY` set
 
 Never commit a real key into this repo.
 
@@ -40,36 +52,45 @@ Never commit a real key into this repo.
 
 ### Cursor
 
-Copy this folder to %USERPROFILE%\.cursor\plugins\local\voice-logica, reload Cursor, set the API key, then ask it to list your agents.
+Copy this folder to %USERPROFILE%\.cursor\plugins\local\voice-logica, reload Cursor, click Connect, then ask it to list your agents.
 
 ### Claude Code
 
     claude plugin validate .
     claude --plugin-dir .
 
-Claude prompts for the API key. Then try /voice-logica:manage-voice-agents or ask it to list your agents.
+Connect Voice Logica MCP if prompted. Then try /voice-logica:manage-voice-agents or ask it to list your agents.
 
 ### ChatGPT / Codex
 
-Codex and ChatGPT desktop can load this folder as a local plugin. ChatGPT on the web wants a hosted MCP URL, not npx. The current server is stdio-only. For a public ChatGPT listing, expose the MCP as HTTPS later.
+Use the hosted MCP URL `https://api.voicelogica.ai/api/v1/mcp` with OAuth. Codex can also load this folder as a local plugin.
+
+### Gemini CLI
+
+    gemini extensions install voicelogica/voice-logica-plugin
+
+Then authenticate the remote MCP if Gemini asks.
 
 ## Publish
 
-Same folder, three submissions. Listing on one store does not list you on the others.
+Same folder, several submissions. Listing on one store does not list you on the others.
 
-- Cursor: push a public Git repo, then https://cursor.com/marketplace/publish
+- Cursor official: https://cursor.com/marketplace/publish
+- cursor.directory: https://cursor.directory/plugins/new
 - Claude community: run claude plugin validate ., then https://platform.claude.com/plugins/submit
-- Official Claude marketplace is invite-only. https://clau.de/plugin-directory-submission is a short link to the docs, not a separate form.
-- ChatGPT / Codex: https://developers.openai.com/plugins/deploy/submission Prefer a public HTTP MCP for ChatGPT web.
+- Official Claude marketplace is invite-only
+- ChatGPT / Codex: https://developers.openai.com/plugins/deploy/submission
+- Gemini CLI: `gemini-extension.json` plus the `gemini-cli-extension` GitHub topic
+- Grok: listing PR against xai-org/plugin-marketplace
 
 ## Layout
 
     gemini-extension.json        Gemini CLI gallery manifest
     plugin.json                 Agent Plugins (portable)
-    mcp.json                    Cursor + Agent Plugins MCP
-    .mcp.json                   Claude Code + Codex MCP
-    .cursor-plugin/plugin.json  Cursor manifest + API key variable
-    .claude-plugin/plugin.json  Claude Code manifest + userConfig
+    mcp.json                    Cursor + Agent Plugins MCP (hosted OAuth)
+    .mcp.json                   Claude Code + Codex MCP (hosted OAuth)
+    .cursor-plugin/plugin.json  Cursor manifest
+    .claude-plugin/plugin.json  Claude Code manifest
     .codex-plugin/plugin.json   ChatGPT / Codex manifest
     skills/manage-voice-agents              Router: confirm MCP, list agents, pick a skill
     skills/edit-voice-agents                Editor tabs, prompts, knowledge files
