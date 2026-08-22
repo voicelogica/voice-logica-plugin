@@ -63,6 +63,15 @@ Preferred setup: Transfer Connection → enable **Follow Prompt Instructions Whe
 | **Attended** (blind OFF) | Agent calls the recipient first. If they answer: ask to connect. If no / no-answer → agent continues with the caller. |
 | **Blind** (blind ON) | Caller is sent straight through. Agent cannot take the call back. |
 
+### When to pick attended vs blind
+
+Attended is the warm/consult path. Blind is the send-through path.
+
+- **Blind first** on mobiles, unknown PBXs, and any destination that has not passed a real test. Caller goes straight to ringing or voicemail. The agent cannot take the call back.
+- **Attended (warm)** only when they need a consult: announce, ask the human, return to the caller if no/no-answer. Many PBXs and carriers do not support this (SIP REFER declined, destination never rings, broken check-leg). If attended fails on that PBX, switch to **blind**. Do not keep retrying warm.
+- Internal extensions still need SIP credentials in Phones either way.
+
+If unsure, set blind ON and test a Call ID. Turn attended on only after that specific PBX succeeds.
 Attended-only options:
 
 - Announce summary to recipient
