@@ -17,9 +17,10 @@ Use the Voice Logica MCP. Do not invent agent IDs, phone numbers, or API fields.
 
 - Create / build / go-live a new agent: `edit-voice-agents`
 - Edit settings, prompts, languages, transfers, knowledge: `edit-voice-agents`
+- Prompt over ~20k / knowledge files / router+specialist: `edit-voice-agents`
 - Call went badly / change how the agent behaves: `fix-agent-behavior`
 - Diagnose a failed call, missing tool, or "is it the model?": `troubleshoot-voice-agents`
-- DIDs, SIP phones, inbound numbers, edge devices, registration: `manage-phones`
+- DIDs, SIP phones, inbound numbers, edge devices, registration, one-way audio: `manage-phones`
 - Connect any integration (OAuth, API, tunnels, edge): `manage-integrations`
 - HubSpot / Zoho / Salesforce: `manage-crm`
 - Woo, Shopify, and other shops: `manage-ecommerce`
@@ -30,10 +31,10 @@ Use the Voice Logica MCP. Do not invent agent IDs, phone numbers, or API fields.
 - Workflows, triggers, nodes: `manage-workflows`
 - Call logs, outbound campaigns, test scenarios: `manage-calls-campaigns`
 - Companies, plans, operating hours: `manage-company-billing`
-- File a ticket in the Voice Logica app: `create-support-ticket`
+- File a ticket in the Voice Logica app (Contact Support) with Call IDs: `create-support-ticket` — portal fallback https://support.voicelogica.ai
 - Full MCP tool catalog: `use-voice-logica-mcp`
 
-Transfers live on the agent (Transfer Connection + transfer prompt). Phone registrations live in `manage-phones`. Do not mix them.
+Transfers live on the agent (Transfer Connection + transfer prompt). Phone registrations live in `manage-phones`. Do not mix them. Attended / warm often fails on PBXs that decline SIP REFER — `edit-voice-agents` picks blind vs attended.
 
 ## Style
 

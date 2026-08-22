@@ -92,7 +92,11 @@ Prompt / analysis scope is the opposite (flat `{{phone_number}}`). See `edit-voi
 4. `test_workflow` (or `run_workflow` when they asked to run it).
 5. `save_workflow_version` after a working change.
 
+`test_workflow` is worthless if you hand-feed the trigger payload. Test with **nothing hand-fed** so the runtime resolves variables — or the first live call finds it.
+
 Do not delete a workflow to "start over" unless the user asked.
+
+Write Greek literally in JSON-string node params. `\uXXXX` escapes can drop letters. Re-read the node.
 
 ## Common jobs
 

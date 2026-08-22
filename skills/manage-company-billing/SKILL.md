@@ -57,7 +57,11 @@ UI gates are API-driven per company. `get_subscription` first.
 
 Minute pools are separate: AI minutes (agent talk time), analysis minutes (post-call / post-transfer analysis), and **telephony provider credits** (PSTN outbound / failover). Attended transfer adds an extra outbound leg that can use AI minutes.
 
+Inbound minutes on a plan do **not** include unlimited PSTN outbound. Outbound needs `allow-outbound-calls` **and** provider credits (`manage-calls-campaigns`).
+
 A plan with `seconds: 0` (including a container / inactive plan) rejects calls as busy. Quote `endCallReason` from `get_calls`. Do not debug SIP first.
+
+Reseller / new client company on a container plan with `seconds: 0` is normal until the **reseller** assigns a real plan. Do not upgrade or activate a client's plan for them — that starts billing. Give them the path and let them do it.
 
 Shopify marketplace billing can disable in-app plan changes.
 

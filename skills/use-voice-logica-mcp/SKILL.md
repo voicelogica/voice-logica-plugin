@@ -9,6 +9,8 @@ This is the full public catalog. Confirm the MCP is connected (Connect / OAuth t
 
 Never commit or paste live API keys, OAuth tokens, or sender tokens into chat or git.
 
+Write Greek literally in JSON-string parameters. `\uXXXX` escapes can drop letters. Re-read after write.
+
 ## Start here
 
 | Job | Skill |
@@ -51,9 +53,9 @@ Skill: `edit-voice-agents` (behavior: `fix-agent-behavior`).
 - `get_agent_workflows` / `update_agent_workflows`
 - `create_customer_instructions` / `get_customer_instructions` / `update_customer_instructions` (admin)
 
-`update_agent_transfer_settings` **replaces** `transferSettings` — `get_` first and resend every field. `update_agent_analysis_config` **replaces** `analysisProperties` the same way.
+`update_agent_transfer_settings` **replaces** `transferSettings` — `get_` first and resend every field. `update_agent_analysis_config` **replaces** `analysisProperties` the same way. `update_agent_scenario` **replaces** too — omitting `agentId` can detach the scenario.
 
-Prompt/analysis variables are **flat** (`{{phone_number}}`, `{{booked}}`). Workflow variables are **`call.`-prefixed**. `analysisPrompt` is interpolated. See `edit-voice-agents`.
+Prompt/analysis variables are **flat** (`{{phone_number}}`, `{{booked}}`). Workflow variables are **`call.`-prefixed**. `analysisPrompt` is interpolated. System prompt ideal 15–20k characters; above that use knowledge files, not a bigger prompt. See `edit-voice-agents`.
 
 ### Agent tools (`list_agent_tools` / `update_agent_tool`)
 
@@ -67,7 +69,7 @@ Documented names you may see:
 
 ## Phones and edge devices
 
-Skill: `manage-phones`. Private PBX: Edge Devices, WireGuard UDP 51820. Health = Online **and** Tunnel up **and** PBX reachable.
+Skill: `manage-phones`. Private PBX: Edge Devices, WireGuard UDP 51820. Health = Online **and** Tunnel up **and** PBX reachable. Direct SIP ≠ Edge ≠ ERP tunnel. Yuboto PBX integration ≠ SIP phone.
 
 - `get_voip_phones` / `create_voip_phone` / `update_voip_phone` / `delete_voip_phone`
 - `activate_voip_phone` / `deactivate_voip_phone`
@@ -139,7 +141,7 @@ Skill: `manage-calendar-google-microsoft`. Calendar ≠ Meet ≠ Chat. Outlook e
 
 ## Support tickets (Voice Logica app)
 
-Skill: `create-support-ticket`. These are **not** email and **not** Freshdesk/Zendesk.
+Skill: `create-support-ticket`. These are **not** email and **not** Freshdesk/Zendesk. File in the app (Contact Support) with Call IDs. Portal fallback: https://support.voicelogica.ai
 
 - `create_ticket` / `list_tickets` / `get_ticket`
 - `list_ticket_mentions` / `reply_to_ticket` / `change_ticket_status`

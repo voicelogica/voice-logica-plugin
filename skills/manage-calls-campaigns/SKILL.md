@@ -27,8 +27,12 @@ Default list window: last 7 days unless the user asked for another range. Summar
 - Attended-transfer outbound legs may have a transcript but **no full recording**.
 - Very short / never-established calls may lack usable audio.
 - Calls that stay "open" may not finalize recording/transcript until hangup.
-- There is no archive feature. Use **seen / unseen** (and Unseen only).
+- There is no archive feature. Use **seen / unseen** (auto when opened; Unseen only filter; shows who viewed and when).
 - Filters customers care about: unseen, date range, agent, direction, phone / Call ID.
+
+If the call completed, a transcript exists, and audio should exist (not a transfer check-leg / not a 2-second hangup), file a ticket (`create-support-ticket`) with that Call ID. Do not invent an archive button.
+
+Incomplete / cut-off audio: collect Call ID + timestamp in the recording (TTS cut, caller hangup, transfer mid-utterance, or network). Then diagnose from `get_full_call` / `get_call_logs`.
 
 ## Scenario MCP tools
 
@@ -41,6 +45,8 @@ Default list window: last 7 days unless the user asked for another range. Summar
 - `apply_scenario_improvements` / `dismiss_scenario_improvements`
 
 Tests / scenarios tab is admin, super-admin, or account-manager.
+
+`update_agent_scenario` **replaces** — it does not merge. Always `get_agent_scenario` first and resend **every** field, including `agentId`. Omitting `agentId` can silently detach the scenario from the agent.
 
 ## Scenario judge is not runtime truth
 
@@ -56,15 +62,21 @@ When a scenario says a tool failed:
 
 Do not conclude a workflow or CRM write failed from a scenario field alone. Do not apply scenario improvements without showing the user what they change.
 
+Write judge criteria on **turn order and what was said**, not "after the tool answers" — the judge cannot see tool responses.
+
 ## Outbound campaigns
 
-Needs: configured agent, phone list, campaign settings, a SIP / DID (`manage-phones`), AI minutes **and** provider telephony credits. Outbound tab is plan-gated (`allow-outbound-calls`).
+Needs **all** of: configured agent, phone list, campaign settings (schedule, max duration, min duration, retry), a SIP / DID (`manage-phones`), AI minutes **and** provider telephony credits. Outbound tab is plan-gated (`allow-outbound-calls`). Inbound minutes on a plan do not include unlimited PSTN outbound.
 
 Each cloned outbound agent needs its **own SIP extension** (or port). They share the company minute pool.
 
 Typical settings: call schedule, max duration, min duration (filter short rejects from reports), retry. Outbound prompts should identify the purpose immediately and ask if it is a good time.
 
 `initiate_call` / `initiate_bulk_calls` after confirming the agent and caller ID / phone.
+
+**Calls are not being made.** Check in order: campaign enabled/scheduled, `get_subscription` has seconds remaining, SIP / DID active, phone list has valid numbers, provider credits exist.
+
+**Calls connect but the agent is silent.** Greeting in the prompt / welcome, agent waiting for the caller to speak first, or codec mismatch — not a missing campaign toggle.
 
 **AI minutes vs provider credits.** No provider credits = no PSTN outbound, regardless of plan. For Yuboto wallet top-up, send only https://services.yuboto.com/mynumber/ and support@yuboto-telephony.gr.
 

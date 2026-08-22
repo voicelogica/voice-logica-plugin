@@ -25,7 +25,7 @@ Order of operations:
 12. `save_agent_version` after a working config.
 13. Test with a real call and a Call ID.
 
-Limits (do not invent others): agent name 100 chars; description 500 (internal); tone 200. System prompt ideal 15,000–20,000 characters (plan feature `system-prompt` may block save). Knowledge Q&A: question ~200 chars, answer ~750; document mode subject 100 / content 2500. Split facts across many Q&As.
+Limits (do not invent others): agent name 100 chars; description 500 (internal); tone 200. System prompt ideal 15,000–20,000 characters (plan feature `system-prompt` may block save). Knowledge Q&A: question ~200 chars, answer ~750; document mode subject 100 / content 2500. Split facts across many Q&As. Summary prompt 5000; transcription prompt 160; analysis prompt is plan `analysis-prompt`. Hold-sound upload 50 MB / trim ~60 s.
 
 If the prompt stays above ~20k after moving facts out, use a **router agent + specialist** (transfer / hand-off), not a bigger prompt.
 
@@ -72,6 +72,9 @@ Attended is the warm/consult path. Blind is the send-through path.
 - Internal extensions still need SIP credentials in Phones either way.
 
 If unsure, set blind ON and test a Call ID. Turn attended on only after that specific PBX succeeds.
+
+**SIP REFER declined / attended never rings / broken check-leg** is the PBX or carrier, not the prompt. Switch to blind. If they still need attended, file a ticket (`create-support-ticket`) with Call ID, destination type (mobile / landline / extension), and whether the destination rang. Do not keep retrying warm on that PBX.
+
 Attended-only options:
 
 - Announce summary to recipient
@@ -112,19 +115,24 @@ Never put `"transferring"` in `endCallReasons` — the agent hangs up instead of
 
 ## Prompts vs knowledge files
 
-Keep the system prompt around 15,000 to 20,000 characters.
+Keep the system prompt around 15,000 to 20,000 characters. Client-facing reason is stability and accuracy — never mention internal cost.
 
-Keep in the prompt: role, conversation flow, transfer rules, hard constraints, tone, language, short examples.
+### Prompt over ~20k (exact support rule)
 
-Move to knowledge files: prices, catalogs, addresses, hours, staff lists, long FAQs, policies, anything the agent should retrieve.
+1. Measure with `get_agent_prompt` (character count). Check `get_subscription` — plans cap `system-prompt`.
+2. Keep in the prompt: role, conversation flow, transfer rules, hard constraints, tone, language, short examples.
+3. Move to knowledge files: prices, catalogs, addresses, hours, staff lists, long FAQs, policies, anything the agent should retrieve.
+4. Create Q&As (question as a caller would ask + answer + alt questions). One fact family per entry. Greek callers → Greek questions and alt questions. Prefer many small Q&As over one blob.
+5. Assign the knowledge file to the agent **and enable it**. Upload alone is not enough. Wait until embeddings are ready.
+6. Trim the facts out of the prompt. Do **not** restate a rule that is already there — that eats `system-prompt` budget and does not fix a violated rule (`fix-agent-behavior`).
+7. If it is still ~20k+ after extraction (or 30k+), split **router agent + specialist** (transfer / hand-off). Do not grow one prompt.
+8. Test with a real Call ID.
 
-Knowledge entry format: **Question** (as a caller would ask) + **Answer** + **alt questions** (other phrasings). One fact family per entry. Greek callers → Greek questions and alt questions. Prefer many small Q&As over one blob.
-
-After adding knowledge: assign it to the agent, enable it, wait until embeddings are ready, then trim the prompt and test.
+If save fails: hit plan `system-prompt`. If add-knowledge fails with `knowledge_questions_limit_reached`: plan `knowledge-questions` quota.
 
 If the user says "I uploaded docs but the agent does not know", check assigned, enabled, still processing, and whether questions match the knowledge entries.
 
-Do not put API keys or internal tool names in customer-facing prompt text. Client-facing reason for a lean prompt is stability and accuracy — never mention internal cost.
+Do not put API keys or internal tool names in customer-facing prompt text.
 
 ## Prompt / analysis variables
 
@@ -137,7 +145,9 @@ Two scopes with different names:
 
 `analysisPrompt` **is** interpolated. Post-call analysis properties interpolate **flat**: `{{booked}}`, not `{{call.postAnalysisResults.booked}}`.
 
-An unresolved `{{name}}` still appears as `[name]` in the prompt body. Only the VARIABLES block on the call dump tells you it failed. Do not call that a regression until you diff `postAnalysisResults` keys against an older Call ID — a changed analysis config is the usual cause.
+An unresolved `{{name}}` still appears as `[name]` in the prompt body. Only the VARIABLES block on the call dump tells you it failed. Do not call that a regression until you diff `postAnalysisResults` keys against an older Call ID — a changed analysis config is the usual cause. The number can still be present as `phone number: "…"` under a different key; the model had it and copied the token.
+
+Write Greek literally in JSON-string parameters. `\uXXXX` escapes can drop letters. Re-read the result.
 
 ## Analysis config
 
@@ -147,7 +157,11 @@ Types: `string | number | boolean | array | date | time | enum | object`. The pr
 
 Notification SMS (`analysisSmsConfig` / `phoneNumbers`) goes to the **business**, not the caller. For "text the caller", see `manage-sms`.
 
-Built-in notification emails and workflow `emailConfig` nodes are two different systems. Check both when emails are missing, duplicated, or go to the wrong person.
+Built-in notification emails and workflow `emailConfig` nodes are two different systems. Check both when emails are missing, duplicated, or go to the wrong person. Do not invent a "stop all emails" toggle. Do not ask for mailbox passwords.
+
+"Open Call" in the email goes to the dashboard instead of the player: try a logged-in browser; if it still happens, file a ticket with that Call ID.
+
+Emails for a failover / human-answered leg may not be suppressible. Do not invent a toggle.
 
 ## How to edit
 

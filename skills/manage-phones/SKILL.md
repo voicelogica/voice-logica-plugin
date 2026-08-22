@@ -49,9 +49,9 @@ Ask the user for the values their PBX issued. Typical fields:
 - Password (user pastes into the Voice Logica form or MCP write — do not echo it)
 - Codec (usually **OPUS** or **G.711** — must match the PBX)
 
-They may need to whitelist the Voice Logica SIP/media IP on the PBX and allow **UDP 5060** plus RTP (typically **10000–20000**). Registration refresh is often **3600** seconds.
+They may need to whitelist the Voice Logica SIP/media IP on the PBX and allow **UDP 5060** plus RTP (typically **10000–20000**). Registration refresh is often **3600** seconds. Do not invent the Voice Logica IP — use the value they were given or ask Voice Logica.
 
-Then `create_voip_phone` / `activate_voip_phone`. Confirm registration, a test dial, and two-way audio.
+What they provide back: server, port, extension/username, auth ID, password, codec. Enter those in Phones. Then `create_voip_phone` / `activate_voip_phone`. Confirm registration, a test dial, and two-way audio.
 
 **Internal extension as a transfer destination.**
 Register that extension as a VoIP phone first, then reference it in the agent transfer prompt (`edit-voice-agents`). Without credentials in Phones, extension transfer fails even if Transfer Connection looks correct.
@@ -70,7 +70,7 @@ Do not ask the customer to open inbound SIP ports to the internet when Edge is t
 If a test call returns busy with a working device, `get_subscription` first. A plan with `seconds: 0` rejects the call as busy (`endCallReason` will say no seconds remaining). That is not an Edge fault.
 
 **Transfers vs phones.**
-Phones are the numbers and registrations. Transfer destinations and attended/blind live on the agent Transfer Connection tab (`edit-voice-agents`).
+Phones are the numbers and registrations. Transfer destinations and attended/blind live on the agent Transfer Connection tab (`edit-voice-agents`). Attended often fails on PBXs that decline SIP REFER — switch to blind; file a ticket if they still need attended.
 
 **Portability / failover / "the AI died".**
 Ask: which public number, exact window, did **any** Call IDs appear, what rang (desk phone / old PSTN / mobile failover). Call IDs present → AI received some traffic. Zero Call IDs → traffic never reached Voice Logica.
@@ -84,8 +84,15 @@ Possible, but each DID needs a clean mapping to the correct agent/extension. Col
 **Hold after answer.**
 After a human picks up a transfer, hold/resume is on the physical phone or softphone. Ring timeout (how long it rings before fallback) is a transfer setting, not hold.
 
-**One-way audio / no audio.**
-Codec mismatch, RTP blocked, or (on Edge) UDP 51820 blocked. Check codec match and RTP / tunnel health before rewriting the prompt.
+## Registration vs audio (do not mix)
+
+Work this tree in order. Registration up is not the same as audio working.
+
+1. **Not registered** → credentials, SIP server/port, IP whitelist on the PBX, firewall UDP 5060. Ask them to confirm the extension appears in their PBX.
+2. **Registered, calls never connect / agent does not answer** → PBX routing / time-conditions / portability, or the agent is disabled. If the window has **zero Call IDs**, traffic never reached Voice Logica.
+3. **Registered, call connects, one-way or no audio** → codec mismatch or RTP blocked (typically UDP 10000–20000). On Edge: UDP 51820 blocked (Online without Tunnel: up).
+
+Do not rewrite the prompt for a registration or RTP failure.
 
 **Each outbound agent needs its own extension** (or port). Do not put two outbound agents on the same SIP extension. See `manage-calls-campaigns`.
 

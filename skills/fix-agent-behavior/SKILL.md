@@ -18,6 +18,8 @@ Then decide: the agent broke a written rule, followed a rule the user now wants 
 
 If the rule is already in the prompt and was violated, restating it again wastes `system-prompt` budget (`get_subscription` before adding text). Fix the mechanism (tool, transfer prompt, end-call, language) instead.
 
+If `get_agent_prompt` is approaching or above ~20,000 characters, do **not** add more rules. Move facts to knowledge and trim first (`edit-voice-agents`). A 30k+ prompt needs router + specialist, not another paragraph.
+
 If the agent speaks JSON, tool names, or brackets out loud, collect Call ID + timestamp and file a ticket (`create-support-ticket`). Do not try to prompt-paper over leaked system content.
 
 ## Common fixes
@@ -56,7 +58,7 @@ If the transcript shows the agent talking to itself, check echo / enable `lock_o
 
 **Out-of-hours transfers.** Enable business hours, block transfer when closed, use an off-hours greeting or message flow. Also read the transfer settings prompt first (`edit-voice-agents`) — a bare number table will dial as soon as a person is identified.
 
-**Transferred when it should not have.** Start at `promptForTransferReason` (`get_agent_transfer_settings`), not the system prompt. See `edit-voice-agents`.
+**Transferred when it should not have.** Start at `promptForTransferReason` (`get_agent_transfer_settings`), not the system prompt. See `edit-voice-agents`. Attended / warm failures (SIP REFER) are telephony — switch to blind; do not add more transfer prose.
 
 ## After a change
 
