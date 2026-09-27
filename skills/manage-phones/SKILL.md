@@ -11,7 +11,7 @@ Use Voice Logica MCP phone tools. Do not invent numbers, SIP credentials, or age
 
 - `get_voip_phones` / `create_voip_phone` / `update_voip_phone` / `delete_voip_phone`
 - `activate_voip_phone` / `deactivate_voip_phone`
-- `get_edge_devices` / `set_edge_device_forward` / `remove_edge_device_forward`
+- `get_edge_installer` / `get_edge_devices` / `set_edge_device_forward` / `remove_edge_device_forward`
 
 ## Before changing anything
 
@@ -56,14 +56,15 @@ What they provide back: server, port, extension/username, auth ID, password, cod
 **Internal extension as a transfer destination.**
 Register that extension as a VoIP phone first, then reference it in the agent transfer prompt (`edit-voice-agents`). Without credentials in Phones, extension transfer fails even if Transfer Connection looks correct.
 
-**Private on-prem PBX (Edge Device).**
+**Private on-prem PBX (Edge Device), done from the chat.**
 
-1. Customer IT installs the connector on the PBX LAN (Windows EXE, Linux/Pi token installer, or OVA). VM NIC must be **bridged** onto the PBX LAN.
-2. Firewall: outbound **UDP 51820** to the edge gateway **and** outbound **TCP 443**. TCP 443 alone can look **Online** with **no calls / no audio**.
-3. Disable **SIP ALG**. Bidirectional UDP to the PBX IP is required (RTP uses dynamic ports; SIP 5060 alone is not enough).
-4. Approve the device. Push Config: PBX LAN IP + SIP port (Panasonic often **5060**, Alcatel OXO often **5059**).
-5. Create the VoIP phone as **Via edge device**, pick the device, set the private PBX server IP, transport **UDP**.
-6. Health check is three separate signals: **Online**, **Tunnel: up**, **PBX: reachable**. Never report "Online" as working.
+1. `get_edge_installer` with `platform` (`windows` or `linux`, ask the user). Give them the `downloadUrl` (valid 4 hours) or the `command`, plus `steps` and `requirements`. The machine must sit on the PBX LAN; a VM NIC must be **bridged**.
+2. Firewall: outbound **UDP 51820** and outbound **TCP 443** to the edge gateway. TCP 443 alone can look **Online** with **no calls / no audio**.
+3. Poll `get_edge_devices` until `ready: true`. Pending devices are approved on read. `online: true` with `tunnelUp: false` = UDP 51820 blocked.
+4. Ask for the PBX LAN IP, SIP port (Panasonic often **5060**, Alcatel OXO often **5059**) and the extension username/password. If the user does not know the IP, show `pbxCandidates` and confirm one.
+5. `create_sip_trunk` with `host` = PBX LAN IP, `port`, `transport: "udp"`, `inboundAuthType`/`outboundAuthType: "registration"`, `username`, `password`. A private IP is routed through the edge device automatically (the only device, or the one on the PBX subnet; pass `edgeDeviceId` if several match). It waits for the device and registers before returning.
+6. Disable **SIP ALG** at the site. Bidirectional UDP to the PBX IP is required (RTP uses dynamic ports; SIP 5060 alone is not enough).
+7. Health check is three separate signals: **Online**, **Tunnel: up**, **PBX: reachable** (ping only; can be false where SIP works). Never report "Online" as working.
 
 Do not ask the customer to open inbound SIP ports to the internet when Edge is the design.
 
