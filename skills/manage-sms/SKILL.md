@@ -7,12 +7,12 @@ description: Send SMS or Viber, manage sender IDs, and configure the send_sms ag
 
 ## MCP tools
 
-- `send_sms`
-- `get_sms`
-- `list_sms_senders`
-- `add_sms_sender`
+- `messages_execute` (action `send_sms`)
+- `messages_query` (action `get_sms`)
+- `messages_query` (action `list_sms_senders`)
+- `messages_execute` (action `add_sms_sender`)
 - `verify_sms_sender`
-- `send_viber`
+- `messages_execute` (action `send_viber`)
 
 Agent tool: `send_sms` on the agent (`list_agent_tools` / `update_agent_tool`) with a `senderId`.
 
@@ -20,9 +20,9 @@ Sender management in the app is **admin or account-manager**.
 
 ## 3-layer rule
 
-1. Add and verify a sender (`add_sms_sender` → `verify_sms_sender`).
+1. Add and verify a sender (`messages_execute` (action `add_sms_sender`) → `verify_sms_sender`).
 2. Set `senderId` on the agent's `send_sms` tool.
-3. Test with a Call ID or a one-off `send_sms`, then `get_sms`. Always test to a **real phone**.
+3. Test with a Call ID or a one-off `messages_execute` (action `send_sms`), then `messages_query` (action `get_sms`). Always test to a **real phone**.
 
 Never paste live sender tokens, provider passwords, or API keys into chat.
 
@@ -34,9 +34,9 @@ These are different failures. Do not treat them as one.
 
 **Not sending** (no message, provider error, pending verify):
 
-1. `list_sms_senders` — is the sender there and verified?
+1. `messages_query` (action `list_sms_senders`) — is the sender there and verified?
 2. Is `senderId` set on the agent tool?
-3. `get_sms` for the attempt — status and error.
+3. `messages_query` (action `get_sms`) for the attempt — status and error.
 4. Check the Call ID `toolCalls` if this was during a call.
 5. If this is a workflow SMS: did execution reach the `sendSms` node? Any credit / balance issue?
 
@@ -66,10 +66,10 @@ Letting the model write `messageToUser` beats stitching date/time fields.
 List senders, pick a verified one, set `senderId` on the agent `send_sms` tool, add a prompt rule for when to text, then test with a Call ID.
 
 **"Add a sender."**
-`add_sms_sender`, then `verify_sms_sender`. Do not send from an unverified sender.
+`messages_execute` (action `add_sms_sender`), then `verify_sms_sender`. Do not send from an unverified sender.
 
 **"Send a Viber message."**
-Use `send_viber`. Confirm the destination and sender first. This is not `send_sms`.
+Use `messages_execute` (action `send_viber`). Confirm the destination and sender first. This is not `messages_execute` (action `send_sms`).
 
 ## After a change
 

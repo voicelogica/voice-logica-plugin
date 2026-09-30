@@ -15,7 +15,7 @@ Order of operations:
 2. `get_agents` — do not create a duplicate name.
 3. `create_agent` with the name and details they gave. Then `get_agent` and configure the rest with the tools below. Do not invent a create payload schema.
 4. Switch the agent to **Power View** if they need transfers, tools, analysis, or end-call (`viewMode` is per agent: `business` | `power`). Business View shows only AI Assistant + Languages.
-5. Prompt (`update_agent_prompt`) and welcome (`update_agent_welcome_message`). Do not put the same greeting in both.
+5. Prompt (`edit_agent_prompt` (pass `prompt` for a full rewrite)) and welcome (`update_agent_welcome_message`). Do not put the same greeting in both.
 6. Languages / voices: `list_agent_languages` / `add_agent_language` / `list_voices`.
 7. End-call: `get_agent_end_call_config` / `update_agent_end_call_config`. Never put `"transferring"` in `endCallReasons`.
 8. Transfers if needed — see below. Always `get_agent_transfer_settings` first.
@@ -119,7 +119,7 @@ Keep the system prompt around 15,000 to 20,000 characters. Client-facing reason 
 
 ### Prompt over ~20k (exact support rule)
 
-1. Measure with `get_agent_prompt` (character count). Check `get_subscription` — plans cap `system-prompt`.
+1. Measure with `get_agent_prompt` (character count). Check `billing_query` (action `get_subscription`) — plans cap `system-prompt`.
 2. Keep in the prompt: role, conversation flow, transfer rules, hard constraints, tone, language, short examples.
 3. Move to knowledge files: prices, catalogs, addresses, hours, staff lists, long FAQs, policies, anything the agent should retrieve.
 4. Create Q&As (question as a caller would ask + answer + alt questions). One fact family per entry. Greek callers → Greek questions and alt questions. Prefer many small Q&As over one blob.

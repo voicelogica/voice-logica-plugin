@@ -16,7 +16,7 @@ Most "the platform is down" reports are prompt or config tweaks. Read the live a
 
 Then decide: the agent broke a written rule, followed a rule the user now wants changed, or the prompt is silent. Those need different edits.
 
-If the rule is already in the prompt and was violated, restating it again wastes `system-prompt` budget (`get_subscription` before adding text). Fix the mechanism (tool, transfer prompt, end-call, language) instead.
+If the rule is already in the prompt and was violated, restating it again wastes `system-prompt` budget (`billing_query` (action `get_subscription`) before adding text). Fix the mechanism (tool, transfer prompt, end-call, language) instead.
 
 If `get_agent_prompt` is approaching or above ~20,000 characters, do **not** add more rules. Move facts to knowledge and trim first (`edit-voice-agents`). A 30k+ prompt needs router + specialist, not another paragraph.
 

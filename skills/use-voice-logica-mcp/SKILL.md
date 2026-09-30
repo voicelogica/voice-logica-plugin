@@ -11,6 +11,14 @@ Never commit or paste live API keys, OAuth tokens, or sender tokens into chat or
 
 Write Greek literally in JSON-string parameters. `\uXXXX` escapes can drop letters. Re-read after write.
 
+## My things (tasks, calls, phone)
+
+When the person asks about **their own** tasks, callbacks, calls, extension or apps, use `list_mine` (`what`: tasks by default, callbacks, calls, phone, settings) and `execute_mine` (complete, reopen or add my task; my task emails). Tasks always mean the Voice Logica Tasks page: never support tickets, and never a connected ClickUp, Trello or other task app unless the user names that app. Answer exactly what was asked: tasks for tasks, calls only for calls.
+
+## How the tools are organised
+
+Everyday work has its own tools. The rest of each area sits behind a pair: `<area>_query` reads and `<area>_execute` changes, with `{action, input}`. Call `<area>_query` **without an action** to list every action with its input. Areas: `messages` (SMS, Viber, email, mailboxes, SMS senders), `team` (members, invitations, seats), `billing` (subscription, add-ons, card, cancel/resume, VAT), `calendar`, `tickets`, `tasks` (task settings), `pbx` (PBX registration check, SIP logs, edge devices), `eshop`, `knowledge`, `leads`, `campaigns`, `scenarios`, `versions`, `telephony` (numbers and routes), `integration`. Member management is `query_user_action` / `execute_user_action`. How-to questions: `get_guide` with the user's words (without arguments it lists the guides), then `search_docs`.
+
 ## Start here
 
 | Job | Skill |
@@ -38,7 +46,7 @@ Write Greek literally in JSON-string parameters. `\uXXXX` escapes can drop lette
 Skill: `edit-voice-agents` (behavior: `fix-agent-behavior`).
 
 - `get_agents` / `get_agent` / `create_agent`
-- `get_agent_prompt` / `update_agent_prompt`
+- `get_agent_prompt` / `edit_agent_prompt` (pass `prompt` for a full rewrite)
 - `update_agent_welcome_message`
 - `get_agent_end_call_config` / `update_agent_end_call_config`
 - `get_agent_transfer_settings` / `update_agent_transfer_settings`
@@ -65,7 +73,7 @@ Documented names you may see:
 
 `skip_turn` (`timeoutSeconds` 1–10), `send_sms` (needs `senderId`), `navigate_ivr`, `schedule_callback`, `detect_live_sentiment`, `detect_live_frustration`, `schedule_appointment` (Google Calendar), `handle_silence`, `lock_on_speaker` (echo), `eshop_integration` / shop-specific (`woocommerce`, `shopify`, `opencart`, `magento`, `megasoft`, `custom_api`), `hubspot` / `zoho` / `salesforce`, ERP (`soft1_erp`, `galaxy_drugstore`, `galaxy_erp`, `pylon_erp`, `entersoft_one`), `helpdesk`, `jira`, `clickup`, `airtable`, `guesty`, `hosthub`, `webhotelier`, `courier`, `outlook`
 
-`schedule_appointment` uses Google Calendar. Shop tools are `manage-ecommerce`. CRM tools are `manage-crm`. `send_sms` needs a `senderId` (`manage-sms`). PrestaShop and Trello often have no voice-agent tool.
+`schedule_appointment` uses Google Calendar. Shop tools are `manage-ecommerce`. CRM tools are `manage-crm`. The agent's `send_sms` needs a `senderId` (`manage-sms`). PrestaShop and Trello often have no voice-agent tool.
 
 ## Phones and edge devices
 
@@ -73,14 +81,14 @@ Skill: `manage-phones`. Private PBX: Edge Devices, WireGuard UDP 51820. Health =
 
 - `get_voip_phones` / `create_voip_phone` / `update_voip_phone` / `delete_voip_phone`
 - `activate_voip_phone` / `deactivate_voip_phone`
-- `get_edge_devices` / `set_edge_device_forward` / `remove_edge_device_forward`
+- `pbx_query` (action `get_edge_devices`) / `set_edge_device_forward` / `remove_edge_device_forward`
 
 ## Calls and campaigns
 
 Skill: `manage-calls-campaigns`.
 
-- `get_calls` / `get_calls_with_prompt` / `get_call_statistics`
-- `get_call_logs` / `get_sip_logs` / `get_full_call`
+- `get_calls` / `get_calls` (include `aiDialogue`) / `get_call_statistics`
+- `get_call_logs` / `pbx_query` (action `get_sip_logs`) / `get_full_call`
 - `get_managed_agent_sessions`
 - `initiate_call` / `initiate_bulk_calls`
 - `get_scheduled_calls` / `cancel_scheduled_calls`
@@ -117,15 +125,15 @@ Nodes: `emailConfig`, `apiCall`, `llmCompletion`, `sendSms`, `codeExecution`, `i
 
 Skill: `manage-sms`.
 
-- `send_sms` / `get_sms`
-- `list_sms_senders` / `add_sms_sender` / `verify_sms_sender`
-- `send_viber`
+- `messages_execute` (action `send_sms`) / `messages_query` (action `get_sms`)
+- `messages_query` (action `list_sms_senders`) / `messages_execute` (action `add_sms_sender`) / `verify_sms_sender`
+- `messages_execute` (action `send_viber`)
 
 ## Email
 
 Account mailboxes (not Voice Logica support tickets, not Freshdesk).
 
-- `list_mailboxes` / `list_emails` / `get_email` / `send_email`
+- `messages_query` (action `list_mailboxes`) / `messages_query` (action `list_emails`) / `messages_query` (action `get_email`) / `messages_execute` (action `send_email`)
 
 Workflow sends use `emailConfig`. Helpdesk tickets use `manage-helpdesk-ops`.
 
@@ -134,8 +142,8 @@ Workflow sends use `emailConfig`. Helpdesk tickets use `manage-helpdesk-ops`.
 Skill: `manage-calendar-google-microsoft`. Calendar ≠ Meet ≠ Chat. Outlook exists.
 
 - `list_contacts` / `create_or_update_contact`
-- `list_calendars` / `list_calendar_events`
-- `create_calendar_event` / `update_calendar_event`
+- `calendar_query` (action `list_calendars`) / `calendar_query` (action `list_calendar_events`)
+- `calendar_execute` (action `create_calendar_event`) / `calendar_execute` (action `update_calendar_event`)
 - `connect_google_chat` / `list_google_chat_spaces` / `send_google_chat_message`
 - `list_google_chat_members` / `get_google_chat_messages`
 
@@ -143,19 +151,19 @@ Skill: `manage-calendar-google-microsoft`. Calendar ≠ Meet ≠ Chat. Outlook e
 
 Skill: `create-support-ticket`. These are **not** email and **not** Freshdesk/Zendesk. File in the app (Contact Support) with Call IDs. Portal fallback: https://support.voicelogica.ai
 
-- `create_ticket` / `list_tickets` / `get_ticket`
-- `list_ticket_mentions` / `reply_to_ticket` / `change_ticket_status`
+- `create_ticket` / `tickets_query` (action `list_tickets`) / `tickets_query` (action `get_ticket`)
+- `list_ticket_mentions` / `tickets_execute` (action `reply_to_ticket`) / `change_ticket_status`
 - `close_all_tickets` (admin)
 
 ## Company and billing
 
 Skill: `manage-company-billing`. `companyId` override is admin/reseller only. Normal users omit it.
 
-- `list_companies` / `list_company_users` / `get_company_details`
+- `list_companies` / `team_query` (action `list_company_users`) / `get_company_details`
 - `get_company_operating_hours` / `update_company_operating_hours`
-- `switch_company` / `request_company_access` / `create_company`
-- `upgrade_plan` / `list_plans` / `list_add_ons`
-- `get_payment_method` / `get_subscription`
+- `switch_company` / `team_execute` (action `request_company_access`) / `create_company`
+- `upgrade_plan` / `list_plans` / `billing_query` (action `list_add_ons`)
+- `billing_query` (action `get_payment_method`) / `billing_query` (action `get_subscription`)
 - `get_user_companies_by_email`
 - `get_associate` / `update_associate`
 

@@ -7,7 +7,7 @@ description: Connect Freshdesk, Zendesk, Jira, ClickUp, Trello, Airtable, Guesty
 
 This skill is for **customer** helpdesk, boards, bookings, payments, and couriers.
 
-Voice Logica **app** support tickets are a different product. Those use `create_ticket` / `list_tickets` / `reply_to_ticket`. Open `create-support-ticket` for those. Do not file a Voice Logica ticket when the user asked to create a Freshdesk or Zendesk ticket.
+Voice Logica **app** support tickets are a different product. Those use `create_ticket` / `tickets_query` (action `list_tickets`) / `tickets_execute` (action `reply_to_ticket`). Open `create-support-ticket` for those. Do not file a Voice Logica ticket when the user asked to create a Freshdesk or Zendesk ticket.
 
 ## Public integrations
 
@@ -23,7 +23,7 @@ Read `list_agent_tools` for the live names. Do not invent MCP connect helpers th
 
 - `courier_create_return` — create a courier return shipment
 
-Other helpdesk / board / payment actions go through the connected integration and the agent or workflow (`apiCall`, `emailConfig`). Email mailboxes (`list_mailboxes`, `list_emails`, `get_email`, `send_email`) are account email, not a Freshdesk ticket.
+Other helpdesk / board / payment actions go through the connected integration and the agent or workflow (`apiCall`, `emailConfig`). Email mailboxes (`messages_query` (action `list_mailboxes`), `messages_query` (action `list_emails`), `messages_query` (action `get_email`), `messages_execute` (action `send_email`)) are account email, not a Freshdesk ticket.
 
 ## Company connection fields
 

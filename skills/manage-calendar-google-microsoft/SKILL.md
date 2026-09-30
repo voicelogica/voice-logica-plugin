@@ -21,10 +21,10 @@ Contacts:
 
 Calendar:
 
-- `list_calendars`
-- `list_calendar_events`
-- `create_calendar_event`
-- `update_calendar_event`
+- `calendar_query` (action `list_calendars`)
+- `calendar_query` (action `list_calendar_events`)
+- `calendar_execute` (action `create_calendar_event`)
+- `calendar_execute` (action `update_calendar_event`)
 
 Google Chat (only after `connect_google_chat`):
 
@@ -70,10 +70,10 @@ Treat this as **unproven until a real test call** — set it up, place a call, c
 ## Common jobs
 
 **"The agent should book appointments."**
-Connect Google Calendar, enable `schedule_appointment`, read `get_agent_appointment_settings`, update hours / calendar / duration if needed, then test with a Call ID and `list_calendar_events`.
+Connect Google Calendar, enable `schedule_appointment`, read `get_agent_appointment_settings`, update hours / calendar / duration if needed, then test with a Call ID and `calendar_query` (action `list_calendar_events`).
 
 **"Show my calendars / upcoming events."**
-Use `list_calendars` then `list_calendar_events`. Do not invent event IDs.
+Use `calendar_query` (action `list_calendars`) then `calendar_query` (action `list_calendar_events`). Do not invent event IDs.
 
 **"Send a Google Chat message."**
 `connect_google_chat` first if Chat is not connected. Then list spaces, then send. Calendar OAuth alone is not Chat. Chat API must be enabled and the account must be Google Workspace for many orgs.
