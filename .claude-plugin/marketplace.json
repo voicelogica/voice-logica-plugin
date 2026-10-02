@@ -1,0 +1,20 @@
+{
+  "name": "voicelogica",
+  "owner": {
+    "name": "Voice Logica",
+    "email": "support@voicelogica.ai"
+  },
+  "metadata": {
+    "description": "Voice Logica plugins for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "voice-logica",
+      "source": "./",
+      "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets from Claude Code.",
+      "version": "1.0.2",
+      "category": "productivity",
+      "homepage": "https://voicelogica.ai"
+    }
+  ]
+}
