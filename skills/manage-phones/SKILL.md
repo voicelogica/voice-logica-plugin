@@ -11,7 +11,7 @@ Use Voice Logica MCP phone tools. Do not invent numbers, SIP credentials, or age
 
 - `get_voip_phones` / `create_voip_phone` / `update_voip_phone` / `delete_voip_phone`
 - `activate_voip_phone` / `deactivate_voip_phone`
-- `get_edge_installer` / `get_edge_devices` / `set_edge_device_forward` / `remove_edge_device_forward`
+- `pbx_query` (action `get_edge_installer`) / `pbx_query` (action `get_edge_devices`) / `set_edge_device_forward` / `remove_edge_device_forward`
 
 ## Before changing anything
 
@@ -35,7 +35,7 @@ A third-party hosted PBX (Vodafone One Net, Cosmote, …) is configured on **the
 ## Common jobs
 
 **Why does this agent have no phone?**
-An agent with no DID usually needs a number from Phones, or a plan that includes DIDs (`did` / `free-did`). Check phones first, then the agent, then `get_subscription`. Demo / No Plan / Inactive plans often lock number CTAs.
+An agent with no DID usually needs a number from Phones, or a plan that includes DIDs (`did` / `free-did`). Check phones first, then the agent, then `billing_query` (action `get_subscription`). Demo / No Plan / Inactive plans often lock number CTAs.
 
 **Assign a number to an agent.**
 List free or existing phones, pick one, attach it to the agent ID, then confirm the agent shows that number. Suggest a test inbound call.
@@ -58,9 +58,9 @@ Register that extension as a VoIP phone first, then reference it in the agent tr
 
 **Private on-prem PBX (Edge Device), done from the chat.**
 
-1. `get_edge_installer` with `platform` (`windows` or `linux`, ask the user). Give them the `downloadUrl` (valid 4 hours) or the `command`, plus `steps` and `requirements`. The machine must sit on the PBX LAN; a VM NIC must be **bridged**.
+1. `pbx_query` (action `get_edge_installer`) with `platform` (`windows` or `linux`, ask the user). Give them the `downloadUrl` (valid 4 hours) or the `command`, plus `steps` and `requirements`. The machine must sit on the PBX LAN; a VM NIC must be **bridged**.
 2. Firewall: outbound **UDP 51820** and outbound **TCP 443** to the edge gateway. TCP 443 alone can look **Online** with **no calls / no audio**.
-3. Poll `get_edge_devices` until `ready: true`. Pending devices are approved on read. `online: true` with `tunnelUp: false` = UDP 51820 blocked.
+3. Poll `pbx_query` (action `get_edge_devices`) until `ready: true`. Pending devices are approved on read. `online: true` with `tunnelUp: false` = UDP 51820 blocked.
 4. Ask for the PBX LAN IP, SIP port (Panasonic often **5060**, Alcatel OXO often **5059**) and the extension username/password. If the user does not know the IP, show `pbxCandidates` and confirm one.
 5. `create_sip_trunk` with `host` = PBX LAN IP, `port`, `transport: "udp"`, `inboundAuthType`/`outboundAuthType: "registration"`, `username`, `password`. A private IP is routed through the edge device automatically (the only device, or the one on the PBX subnet; pass `edgeDeviceId` if several match). It waits for the device and registers before returning.
 6. Disable **SIP ALG** at the site. Bidirectional UDP to the PBX IP is required (RTP uses dynamic ports; SIP 5060 alone is not enough).
@@ -68,7 +68,7 @@ Register that extension as a VoIP phone first, then reference it in the agent tr
 
 Do not ask the customer to open inbound SIP ports to the internet when Edge is the design.
 
-If a test call returns busy with a working device, `get_subscription` first. A plan with `seconds: 0` rejects the call as busy (`endCallReason` will say no seconds remaining). That is not an Edge fault.
+If a test call returns busy with a working device, `billing_query` (action `get_subscription`) first. A plan with `seconds: 0` rejects the call as busy (`endCallReason` will say no seconds remaining). That is not an Edge fault.
 
 **Transfers vs phones.**
 Phones are the numbers and registrations. Transfer destinations and attended/blind live on the agent Transfer Connection tab (`edit-voice-agents`). Attended often fails on PBXs that decline SIP REFER — switch to blind; file a ticket if they still need attended.

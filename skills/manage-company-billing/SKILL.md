@@ -12,11 +12,11 @@ Report what the API returns. Do not guess prices or invent plan names. Never men
 Company:
 
 - `list_companies`
-- `list_company_users`
+- `team_query` (action `list_company_users`)
 - `get_company_details`
 - `get_company_operating_hours` / `update_company_operating_hours`
 - `switch_company`
-- `request_company_access`
+- `team_execute` (action `request_company_access`)
 - `create_company`
 - `get_user_companies_by_email`
 - `get_associate` / `update_associate`
@@ -25,9 +25,9 @@ Billing:
 
 - `upgrade_plan`
 - `list_plans`
-- `list_add_ons`
-- `get_payment_method`
-- `get_subscription`
+- `billing_query` (action `list_add_ons`)
+- `billing_query` (action `get_payment_method`)
+- `billing_query` (action `get_subscription`)
 
 Refunds, credit notes, invoices → billing@voicelogica.ai. Do not promise amounts or timelines.
 
@@ -35,11 +35,11 @@ Refunds, credit notes, invoices → billing@voicelogica.ai. Do not promise amoun
 
 `companyId` on these tools is **admin / reseller only**.
 
-Normal users must omit it and operate on the current company. If a normal user passes another company's id, the call fails or hits the wrong tenant. If they need another company, use `list_companies` / `switch_company` / `request_company_access`.
+Normal users must omit it and operate on the current company. If a normal user passes another company's id, the call fails or hits the wrong tenant. If they need another company, use `list_companies` / `switch_company` / `team_execute` (action `request_company_access`).
 
 ## Check the subscription before calling a feature missing
 
-UI gates are API-driven per company. `get_subscription` first.
+UI gates are API-driven per company. `billing_query` (action `get_subscription`) first.
 
 | Symptom | Feature / field to check |
 | --- | --- |
@@ -78,7 +78,7 @@ Hours also feed **Block transfer when company is closed** (`edit-voice-agents`).
 ## Common jobs
 
 **"What plan are we on / what do we pay?"**
-`get_subscription` + `list_plans` + `list_add_ons` + `get_payment_method`. Quote the API. Do not convert currencies or invent discounts.
+`billing_query` (action `get_subscription`) + `list_plans` + `billing_query` (action `list_add_ons`) + `billing_query` (action `get_payment_method`). Quote the API. Do not convert currencies or invent discounts.
 
 **"Upgrade the plan."**
 `list_plans` first. Show the current plan and the target. `upgrade_plan` only after the user confirms.
@@ -87,7 +87,7 @@ Hours also feed **Block transfer when company is closed** (`edit-voice-agents`).
 `list_companies`, match by name, `switch_company`. Then list agents on the new company so later edits hit the right tenant.
 
 **"Create a company / request access."**
-`create_company` or `request_company_access` with the details they gave. Do not create a company because list was empty without asking.
+`create_company` or `team_execute` (action `request_company_access`) with the details they gave. Do not create a company because list was empty without asking.
 
 **"Set hours / we are closed this week."**
 Use `closedAllWeek` for a full close. For normal hours, send the full week the API expects, not a partial empty list.

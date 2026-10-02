@@ -13,11 +13,11 @@ Call dumps may show model, temperature, or reasoningEffort. Those are usually pl
 
 Look at the prompt, tool prompts, whether the expected tool fired (`toolCalls`), plan features, and view/role gates first.
 
-Expired / zero-second subscriptions look like random product bugs. `get_subscription` and the call `endCallReason` before debugging SIP or the prompt.
+Expired / zero-second subscriptions look like random product bugs. `billing_query` (action `get_subscription`) and the call `endCallReason` before debugging SIP or the prompt.
 
 ## "Stopped working" first checks
 
-1. `get_subscription` — active? `seconds` remaining? Plan feature for the missing tab?
+1. `billing_query` (action `get_subscription`) — active? `seconds` remaining? Plan feature for the missing tab?
 2. Any Call IDs in the window? **Zero** → traffic never reached Voice Logica (`manage-phones`).
 3. Phone still registered? (`get_voip_phones`)
 4. Prompt size (`get_agent_prompt`) — approaching / above ~20k characters → extract facts to knowledge, do not add more rules (`edit-voice-agents`).
@@ -67,7 +67,7 @@ Missing / duplicate post-call emails: built-in Analysis + Notifications **and** 
 ## Quick route
 
 1. Get a Call ID. If none exist for the window, stop and treat it as telephony routing.
-2. Fetch the live agent and the call. Check `get_subscription` if the call never connected.
+2. Fetch the live agent and the call. Check `billing_query` (action `get_subscription`) if the call never connected.
 3. Check `toolCalls` for the tool you expected.
 4. Compare prompt / transfer-prompt instructions to what happened.
 5. Change one thing. Ask for a retest Call ID. If still broken after one honest pass, `create-support-ticket`.

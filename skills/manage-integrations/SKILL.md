@@ -71,7 +71,7 @@ Two different bridges. Using the wrong one will not work.
 
 - Path: **Phones → Edge Devices**
 - Transport: **WireGuard UDP 51820**
-- Tools: `get_edge_devices`, `set_edge_device_forward`, `remove_edge_device_forward`
+- Tools: `pbx_query` (action `get_edge_devices`), `set_edge_device_forward`, `remove_edge_device_forward`
 - Phone CRUD stays in `manage-phones`.
 
 Do not put a private PBX on an SSH tunnel. Do not put a private HTTP ERP on an Edge Device. A clinic/pharmacy often needs **both** (Edge for calls, tunnel for ERP).

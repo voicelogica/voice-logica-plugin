@@ -10,10 +10,10 @@ Use Call IDs. Do not invent them. Do not chase model or temperature first — th
 ## Call MCP tools
 
 - `get_calls` — list calls
-- `get_calls_with_prompt` — calls plus the prompt used
+- `get_calls` (include `aiDialogue`) — calls plus the prompt used
 - `get_call_statistics` — aggregates
 - `get_call_logs` — application / tool logs for a call
-- `get_sip_logs` — signaling
+- `pbx_query` (action `get_sip_logs`) — signaling
 - `get_full_call` — full call record
 - `get_managed_agent_sessions` — live / managed sessions
 - `initiate_call` — one outbound call
@@ -74,7 +74,7 @@ Typical settings: call schedule, max duration, min duration (filter short reject
 
 `initiate_call` / `initiate_bulk_calls` after confirming the agent and caller ID / phone.
 
-**Calls are not being made.** Check in order: campaign enabled/scheduled, `get_subscription` has seconds remaining, SIP / DID active, phone list has valid numbers, provider credits exist.
+**Calls are not being made.** Check in order: campaign enabled/scheduled, `billing_query` (action `get_subscription`) has seconds remaining, SIP / DID active, phone list has valid numbers, provider credits exist.
 
 **Calls connect but the agent is silent.** Greeting in the prompt / welcome, agent waiting for the caller to speak first, or codec mismatch — not a missing campaign toggle.
 
@@ -89,10 +89,10 @@ Respect quiet hours, consent, and local outbound laws. Start with a small list.
 ## Common jobs
 
 **"What happened on this call?"**
-Take the Call ID. `get_full_call` + `get_call_logs`. Use `get_sip_logs` for one-way audio, no-answer, or registration issues. Open `troubleshoot-voice-agents` if it is a diagnosis. Zero Call IDs in the window → traffic never reached Voice Logica (`manage-phones`).
+Take the Call ID. `get_full_call` + `get_call_logs`. Use `pbx_query` (action `get_sip_logs`) for one-way audio, no-answer, or registration issues. Open `troubleshoot-voice-agents` if it is a diagnosis. Zero Call IDs in the window → traffic never reached Voice Logica (`manage-phones`).
 
 **"Call this number now / start a campaign."**
-Confirm the agent and caller ID / phone first (`manage-phones`). Confirm `get_subscription` has seconds remaining (0 seconds = busy, not a SIP fault). Then `initiate_call` or `initiate_bulk_calls`. For later, use scheduled calls and `get_scheduled_calls`.
+Confirm the agent and caller ID / phone first (`manage-phones`). Confirm `billing_query` (action `get_subscription`) has seconds remaining (0 seconds = busy, not a SIP fault). Then `initiate_call` or `initiate_bulk_calls`. For later, use scheduled calls and `get_scheduled_calls`.
 
 **"Cancel scheduled outbound."**
 `get_scheduled_calls`, match the batch, then `cancel_scheduled_calls`. Confirm how many were cancelled.
