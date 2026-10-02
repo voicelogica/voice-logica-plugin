@@ -30,6 +30,13 @@ Voice Logica. Website: https://voicelogica.ai. App: https://app.voicelogica.ai. 
 
 Privacy: https://legal.voicelogica.ai/privacy. Terms: https://legal.voicelogica.ai/terms.
 
+## Install
+
+- Claude: [add the connector](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Voice%20Logica&connectorUrl=https%3A%2F%2Fapi.voicelogica.ai%2Fapi%2Fv1%2Fmcp)
+- Claude Code: `claude plugin marketplace add voicelogica/voice-logica-plugin; claude plugin install voice-logica@voicelogica`
+- VS Code: [add the MCP server](https://insiders.vscode.dev/redirect/mcp/install?name=Voice%20Logica&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.voicelogica.ai%2Fapi%2Fv1%2Fmcp%22%7D)
+- Cursor, ChatGPT, Gemini CLI: see below
+
 ## Connect
 
 1. Install the plugin
