@@ -32,7 +32,7 @@ Privacy: https://legal.voicelogica.ai/privacy. Terms: https://legal.voicelogica.
 
 ## Install
 
-- Claude: [add the connector](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Voice%20Logica&connectorUrl=https%3A%2F%2Fapi.voicelogica.ai%2Fapi%2Fv1%2Fmcp)
+- Claude: [add the connector](https://claude.ai/new?modal=add-custom-connector&connectorName=Voice%20Logica&connectorUrl=https%3A%2F%2Fapi.voicelogica.ai%2Fapi%2Fv1%2Fmcp#customize/connectors?q=voice+logica)
 - Claude Code: `claude plugin marketplace add voicelogica/voice-logica-plugin; claude plugin install voice-logica@voicelogica`
 - VS Code: [add the MCP server](https://insiders.vscode.dev/redirect/mcp/install?name=Voice%20Logica&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fapi.voicelogica.ai%2Fapi%2Fv1%2Fmcp%22%7D)
 - Cursor, ChatGPT, Gemini CLI: see below
@@ -70,7 +70,7 @@ Connect Voice Logica MCP if prompted. Then try /voice-logica:manage-voice-agents
 
 ### ChatGPT / Codex
 
-Use the hosted MCP URL `https://api.voicelogica.ai/api/v1/mcp` with OAuth. Codex can also load this folder as a local plugin.
+ChatGPT: turn on Developer mode (Settings, Security and login), open Plugins, click +, then either Upload plugin with https://docs.voicelogica.ai/downloads/voice-logica-plugin.zip or Create custom MCP server with `https://api.voicelogica.ai/api/v1/mcp` and OAuth. Codex can also load this folder as a local plugin.
 
 ### Gemini CLI
 
