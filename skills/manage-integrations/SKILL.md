@@ -9,11 +9,13 @@ Connecting a company integration is not enough. The agent still has to be allowe
 
 ## The 3-layer rule
 
-1. **Connect the integration** at company level (OAuth, API key, or tunnel / edge device).
-2. **Enable the agent tool** on the specific agent (`list_agent_tools` / `update_agent_tool`, or the matching shop / CRM / calendar tool).
+1. **Connect the integration** at company level (`connect_integration` with `provider`: OAuth, API key, or tunnel / edge device).
+2. **Enable the agent tool** on the specific agent (`get_agent_settings` / `update_agent_settings` section `tools`).
 3. **Test with a Call ID.** Read `toolCalls` on that call. Do not declare success from the dashboard toggle alone.
 
 If layer 1 is missing, the tool will not fire. If layer 2 is missing, the integration exists but this agent cannot use it. If layer 3 fails, fetch the Call ID before editing the prompt.
+
+Then `list_integrations` / `describe_integration` {integration} to see its actions, and `integration_query` / `integration_execute` {integration, action, data} to run them. Do not guess action names.
 
 There is no per-integration plan lock. Failures are usually: not connected, `needsReconnect`, wrong role, missing tunnel, or tool not enabled.
 
@@ -51,7 +53,7 @@ Splynx is admin-only. See `manage-erp`.
 
 If an OAuth integration shows `needsReconnect` (Google, Microsoft, HubSpot, Shopify, Salesforce, and similar):
 
-1. Disconnect the integration.
+1. Disconnect the integration (`connect_integration` with step `disconnect`).
 2. Reconnect and finish the provider consent screen.
 3. Re-enable the agent tool if it dropped.
 4. Test with a new Call ID.
@@ -71,7 +73,7 @@ Two different bridges. Using the wrong one will not work.
 
 - Path: **Phones → Edge Devices**
 - Transport: **WireGuard UDP 51820**
-- Tools: `pbx_query` (action `get_edge_devices`), `set_edge_device_forward`, `remove_edge_device_forward`
+- Tools: `pbx_query` (action `get_edge_devices`), `pbx_execute` (actions `claim_edge_device`, `update_edge_device`). Port forwards on the device: ask Voice Logica support.
 - Phone CRUD stays in `manage-phones`.
 
 Do not put a private PBX on an SSH tunnel. Do not put a private HTTP ERP on an Edge Device. A clinic/pharmacy often needs **both** (Edge for calls, tunnel for ERP).

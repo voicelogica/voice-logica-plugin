@@ -11,8 +11,8 @@ Monday.com is **not** self-serve. Do not try to add it from the customer UI. Poi
 
 ## 3-layer rule
 
-1. Connect the CRM integration on the company (OAuth).
-2. Enable the CRM tool on the agent (`list_agent_tools` / `update_agent_tool`). Read the live tool name — commonly `hubspot`, `zoho`, or `salesforce`.
+1. Connect the CRM integration on the company (OAuth, or `connect_integration` with `provider`).
+2. Enable the CRM tool on the agent (`get_agent_settings` / `update_agent_settings` section `tools`). Read the live tool name — commonly `hubspot`, `zoho`, or `salesforce`.
 3. Test with a Call ID and read `toolCalls`.
 
 If OAuth shows `needsReconnect`, disconnect and reconnect. Never edit the prompt to paper over a dead token. Never paste live API tokens into chat.
@@ -48,7 +48,7 @@ Get a Call ID. Check `toolCalls` for the CRM tool. If it never fired, check laye
 Enable `createCallActivity`. Confirm the integration is connected. Test one call and verify the activity on the contact.
 
 **"Which CRM is this agent using?"**
-List agent tools and the company integrations. Say what is connected vs what this agent can use.
+Read `get_agent_settings` section `tools` and `list_integrations`. Say what is connected vs what this agent can use.
 
 ## After a change
 

@@ -15,14 +15,14 @@ Order of operations:
 2. `get_agents` — do not create a duplicate name.
 3. `create_agent` with the name and details they gave. Then `get_agent` and configure the rest with the tools below. Do not invent a create payload schema.
 4. Switch the agent to **Power View** if they need transfers, tools, analysis, or end-call (`viewMode` is per agent: `business` | `power`). Business View shows only AI Assistant + Languages.
-5. Prompt (`edit_agent_prompt` (pass `prompt` for a full rewrite)) and welcome (`update_agent_welcome_message`). Do not put the same greeting in both.
-6. Languages / voices: `list_agent_languages` / `add_agent_language` / `list_voices`.
-7. End-call: `get_agent_end_call_config` / `update_agent_end_call_config`. Never put `"transferring"` in `endCallReasons`.
-8. Transfers if needed — see below. Always `get_agent_transfer_settings` first.
-9. Tools: `list_agent_tools` / `update_agent_tool`. Enable only what the flow needs. Company integrations are a separate step (`manage-integrations`).
+5. Prompt (`edit_agent_prompt`; pass `prompt` for a full rewrite) and welcome (`update_agent_settings` section `welcome`). Do not put the same greeting in both.
+6. Languages / voices: `get_agent_settings` / `update_agent_settings` section `languages`, plus `list_voices`.
+7. End-call: `get_agent_settings` / `update_agent_settings` section `end_call`. Never put `"transferring"` in `endCallReasons`.
+8. Transfers if needed — see below. Always read section `transfer` first.
+9. Tools: `get_agent_settings` / `update_agent_settings` section `tools`. Enable only what the flow needs. Company integrations are a separate step (`manage-integrations`).
 10. Knowledge: assign + enable; wait until embeddings are ready; then trim facts out of the prompt.
 11. Phone: `manage-phones`. An agent with no DID will not take inbound PSTN calls.
-12. `save_agent_version` after a working config.
+12. `versions_execute` (action `save_agent_version`) after a working config.
 13. Test with a real call and a Call ID.
 
 Limits (do not invent others): agent name 100 chars; description 500 (internal); tone 200. System prompt ideal 15,000–20,000 characters (plan feature `system-prompt` may block save). Knowledge Q&A: question ~200 chars, answer ~750; document mode subject 100 / content 2500. Split facts across many Q&As. Summary prompt 5000; transcription prompt 160; analysis prompt is plan `analysis-prompt`. Hold-sound upload 50 MB / trim ~60 s.
@@ -52,7 +52,7 @@ Where things live:
 - Calendar booking: Appointments (needs calendar tool)
 - Public share page `/w/:agentId`: Widget tab is staff/account-manager; the public page still works once enabled
 
-If no phone is connected, the agent shell usually points to VoIP phones or billing.
+If no phone is connected, the agent shell usually points to Phones or billing.
 
 ## Transfers
 
@@ -89,15 +89,15 @@ Attended transfer creates **two call records** (inbound + outbound check-leg). B
 
 Hold after the human answers is a **device / softphone** feature, not an AI setting.
 
-### `update_agent_transfer_settings` replaces `transferSettings`
+### `update_agent_settings` section `transfer` replaces `transferSettings`
 
-It does not merge. Always `get_agent_transfer_settings`, then resend **every** field. Sending only `promptForTransferReason` silently resets omitted fields — notably `transferCallBasedOnPromptInstructions` → `false`, which kills prompt-driven transfers. Re-read after write.
+It does not merge. Always `get_agent_settings` section `transfer`, then resend **every** field. Sending only `promptForTransferReason` silently resets omitted fields — notably `transferCallBasedOnPromptInstructions` → `false`, which kills prompt-driven transfers. Re-read after write.
 
 ### Three places forwarding logic lives — check all
 
-1. Transfer settings prompt — `get_agent_transfer_settings` → `promptForTransferReason` (destination table + whether transfer is allowed)
+1. Transfer settings prompt — `get_agent_settings` section `transfer` → `promptForTransferReason` (destination table + whether transfer is allowed)
 2. System prompt — `get_agent_prompt`
-3. Workflow nodes — `get_agent_workflows` → `get_workflow`
+3. Workflow nodes — `get_agent_settings` section `workflows` → `get_workflow`
 
 When the agent transferred when it should not have, start at (1). A person→number table answers "which number", never "am I allowed yet". Prepend a precondition; keep the client's numbers and labels byte-identical.
 
@@ -151,7 +151,7 @@ Write Greek literally in JSON-string parameters. `\uXXXX` escapes can drop lette
 
 ## Analysis config
 
-`update_agent_analysis_config` replaces the whole `analysisProperties` array. Always `get_agent_analysis_config`, append, send the complete list.
+`update_agent_settings` section `analysis` replaces the whole `analysisProperties` array. Always `get_agent_settings` section `analysis` first, append, send the complete list.
 
 Types: `string | number | boolean | array | date | time | enum | object`. The property **description** is the model instruction. A vague description yields empty values.
 
@@ -166,7 +166,7 @@ Emails for a failover / human-answered leg may not be suppressible. Do not inven
 ## How to edit
 
 1. List agents and match by name. Use the real ID.
-2. `get_agent` (and the matching get_* settings tool) before any replace-style update.
+2. `get_agent` (and `get_agent_settings` for that section) before any replace-style update.
 3. Show the current value, then the proposed change.
 4. Apply the change through MCP.
-5. Confirm what changed and suggest a test call. `save_agent_version` after a working change.
+5. Confirm what changed and suggest a test call. `versions_execute` (action `save_agent_version`) after a working change.

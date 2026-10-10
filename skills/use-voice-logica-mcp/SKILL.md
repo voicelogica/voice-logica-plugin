@@ -11,13 +11,17 @@ Never commit or paste live API keys, OAuth tokens, or sender tokens into chat or
 
 Write Greek literally in JSON-string parameters. `\uXXXX` escapes can drop letters. Re-read after write.
 
-## My things (tasks, calls, phone)
-
-When the person asks about **their own** tasks, callbacks, calls, extension or apps, use `list_mine` (`what`: tasks by default, callbacks, calls, phone, settings) and `execute_mine` (complete, reopen or add my task; my task emails). Tasks always mean the Voice Logica Tasks page: never support tickets, and never a connected ClickUp, Trello or other task app unless the user names that app. Answer exactly what was asked: tasks for tasks, calls only for calls.
-
 ## How the tools are organised
 
-Everyday work has its own tools. The rest of each area sits behind a pair: `<area>_query` reads and `<area>_execute` changes, with `{action, input}`. Call `<area>_query` **without an action** to list every action with its input. Areas: `messages` (SMS, Viber, email, mailboxes, SMS senders), `team` (members, invitations, seats), `billing` (subscription, add-ons, card, cancel/resume, VAT), `calendar`, `tickets`, `tasks` (task settings), `pbx` (PBX registration check, SIP logs, edge devices), `eshop`, `knowledge`, `leads`, `campaigns`, `scenarios`, `versions`, `telephony` (numbers and routes), `integration`. Member management is `query_user_action` / `execute_user_action`. How-to questions: `get_guide` with the user's words (without arguments it lists the guides), then `search_docs`.
+Everyday work has its own tools. The rest of each area sits behind a pair: `<area>_query` reads and `<area>_execute` changes, with `{action, input}`. Call `<area>_query` **without an action** to list every action with its input. Never guess an action name.
+
+Areas: `agents`, `scenarios`, `versions`, `knowledge`, `leads`, `campaigns`, `messages`, `team`, `billing`, `calendar`, `tickets`, `tasks`, `pbx`, `eshop`, `crm`, `telephony`, `channels`, `integration`. Members: `query_user_action` / `execute_user_action`.
+
+How-to questions: `get_guide` with the user's words (no arguments lists the guides), then `search_docs`.
+
+## My things (tasks, calls, phone)
+
+When the person asks about **their own** tasks, callbacks, calls, extension or apps, use `list_mine` (`what`: tasks by default, callbacks, calls, phone, settings) and `execute_mine` (complete, reopen or add my task; my task emails; my call settings). Tasks always mean the Voice Logica Tasks page: never support tickets, and never a connected ClickUp, Trello or other task app unless the user names that app. Answer exactly what was asked.
 
 ## Start here
 
@@ -28,17 +32,17 @@ Everyday work has its own tools. The rest of each area sits behind a pair: `<are
 | Edit prompt, languages, transfers, knowledge | `edit-voice-agents` |
 | Call behavior went wrong | `fix-agent-behavior` |
 | Diagnose with a Call ID | `troubleshoot-voice-agents` |
-| DIDs, SIP, inbound numbers, edge devices | `manage-phones` |
+| SIP trunks, numbers, routes, PBX, edge devices | `manage-phones` |
 | Connect any integration | `manage-integrations` |
 | HubSpot / Zoho / Salesforce | `manage-crm` |
 | Woo, Shopify, other shops | `manage-ecommerce` |
 | Soft1, Galaxy, Pylon, Entersoft | `manage-erp` |
-| Google / Microsoft calendar, contacts, Chat | `manage-calendar-google-microsoft` |
+| Google / Microsoft calendar, contacts | `manage-calendar-google-microsoft` |
 | SMS / Viber | `manage-sms` |
 | Freshdesk, Jira, couriers, payments | `manage-helpdesk-ops` |
 | Workflows and automations | `manage-workflows` |
-| Call logs, outbound, test scenarios | `manage-calls-campaigns` |
-| Companies, plans, hours | `manage-company-billing` |
+| Calls, outbound, campaigns, test scenarios | `manage-calls-campaigns` |
+| Plan, team, hours | `manage-company-billing` |
 | Voice Logica app tickets | `create-support-ticket` |
 
 ## Agents
@@ -46,28 +50,19 @@ Everyday work has its own tools. The rest of each area sits behind a pair: `<are
 Skill: `edit-voice-agents` (behavior: `fix-agent-behavior`).
 
 - `get_agents` / `get_agent` / `create_agent`
-- `get_agent_prompt` / `edit_agent_prompt` (pass `prompt` for a full rewrite)
-- `update_agent_welcome_message`
-- `get_agent_end_call_config` / `update_agent_end_call_config`
-- `get_agent_transfer_settings` / `update_agent_transfer_settings`
-- `get_agent_analysis_config` / `update_agent_analysis_config`
-- `get_agent_notification_config` / `update_agent_notification_config`
-- `list_agent_tools` / `update_agent_tool`
-- `list_agent_languages` / `add_agent_language` / `remove_agent_language`
-- `list_voices`
-- `list_agent_versions` / `save_agent_version` / `delete_agent_version`
-- `get_agent_memory_settings` / `update_agent_memory_settings`
-- `get_agent_appointment_settings` / `update_agent_appointment_settings`
-- `get_agent_workflows` / `update_agent_workflows`
-- `create_customer_instructions` / `get_customer_instructions` / `update_customer_instructions` (admin)
+- `get_agent_prompt` / `edit_agent_prompt` (find/replace or append; pass `prompt` for a full rewrite)
+- `get_agent_settings` (`sections`: one or more; `format: true` lists the fields) / `update_agent_settings` (one `section` plus `changes`). Sections: welcome, voice, languages, transfer, end_call, interruption, memory, analysis, notifications, appointments, ai_disclosure, standby, tools, workflows, pronunciation, transcription, widget
+- `list_voices` / `rename_voice`; `agents_query` (`list_cloned_voices`) / `agents_execute` (`clone_voice`, `delete_cloned_voice`, `delete_agent`)
+- `versions_query` (`list_agent_versions`, `get_agent_publish_history`) / `versions_execute` (`save_agent_version`, `publish_agent_version`, `delete_agent_version`)
+- Hear it: `get_my_agent`, `test_in_browser` (browser voice/chat link), `call_me` then `get_call_result`
 
-`update_agent_transfer_settings` **replaces** `transferSettings` — `get_` first and resend every field. `update_agent_analysis_config` **replaces** `analysisProperties` the same way. `update_agent_scenario` **replaces** too — omitting `agentId` can detach the scenario.
+Sections that hold lists (transfer, analysis, tools) are **replaced** on update: read the section first and resend every field.
 
 Prompt/analysis variables are **flat** (`{{phone_number}}`, `{{booked}}`). Workflow variables are **`call.`-prefixed**. `analysisPrompt` is interpolated. System prompt ideal 15–20k characters; above that use knowledge files, not a bigger prompt. See `edit-voice-agents`.
 
-### Agent tools (`list_agent_tools` / `update_agent_tool`)
+### Agent tools (section `tools`)
 
-These are tools the **voice agent** may run on a call, not MCP tools. Always read the live list. Do not invent names.
+These are tools the **voice agent** may run on a call, not MCP tools. Read them with `get_agent_settings` section `tools` and change them with `update_agent_settings` section `tools`. Always read the live list. Do not invent names.
 
 Documented names you may see:
 
@@ -75,112 +70,130 @@ Documented names you may see:
 
 `schedule_appointment` uses Google Calendar. Shop tools are `manage-ecommerce`. CRM tools are `manage-crm`. The agent's `send_sms` needs a `senderId` (`manage-sms`). PrestaShop and Trello often have no voice-agent tool.
 
-## Phones and edge devices
+## Knowledge
 
-Skill: `manage-phones`. Private PBX: Edge Devices, WireGuard UDP 51820. Health = Online **and** Tunnel up **and** PBX reachable. Direct SIP ≠ Edge ≠ ERP tunnel. Yuboto PBX integration ≠ SIP phone.
+Skill: `edit-voice-agents`.
 
-- `get_voip_phones` / `create_voip_phone` / `update_voip_phone` / `delete_voip_phone`
-- `activate_voip_phone` / `deactivate_voip_phone`
-- `pbx_query` (action `get_edge_devices`) / `set_edge_device_forward` / `remove_edge_device_forward`
+- `list_knowledge_files` / `get_knowledge_file` / `create_knowledge_file`
+- `add_knowledge_entries` (Q&A) / `add_knowledge_text` (document text) / `add_knowledge_link` (website; preview with `crawl_website_pages`)
+- `search_knowledge` (test retrieval)
+- `list_learning_items` / `review_learning_item` / `get_learning_settings` / `update_learning_settings`
+- `knowledge_query` / `knowledge_execute`: edit or delete files and entries, assign files to agents, links, Drive folders, unanswered questions
+- `extract_document`: text from an uploaded file
 
-## Calls and campaigns
+## Phone lines
+
+Skill: `manage-phones`. Private PBX: Edge Devices, WireGuard UDP 51820. Health = Online **and** Tunnel up **and** PBX reachable. Direct SIP ≠ Edge ≠ ERP tunnel.
+
+- `get_sip_trunks` / `create_sip_trunk` / `update_sip_trunk`
+- `connect_pbx` (office PBX), `get_free_number` (free Greek number)
+- `get_user_phone_setup` (devices, extension, SIP credentials, app links)
+- `telephony_query` / `telephony_execute`: numbers, inbound and outbound routes, call settings, `send_device_setup`
+- `pbx_query` (`check_pbx_connection`, `get_sip_logs`, `get_trunk_sip_logs`, `get_edge_devices`, `get_edge_installer`) / `pbx_execute` (`claim_edge_device`, `set_edge_media_ports`, `update_edge_device`)
+
+## Calls
 
 Skill: `manage-calls-campaigns`.
 
-- `get_calls` / `get_calls` (include `aiDialogue`) / `get_call_statistics`
-- `get_call_logs` / `pbx_query` (action `get_sip_logs`) / `get_full_call`
-- `get_managed_agent_sessions`
-- `initiate_call` / `initiate_bulk_calls`
-- `get_scheduled_calls` / `cancel_scheduled_calls`
+- `get_calls` (add include `aiDialogue` for the turn-by-turn dialogue) / `get_call_statistics`
+- `get_managed_agent_sessions` (tool and orchestration traces)
+- `initiate_call` / `initiate_bulk_calls` (1–50) / `assistant_call`
+- `set_call_recording` (pause or resume on the user's own live call)
+- `get_compliance_report` (monthly AI disclosure report)
+- `transcribe_audio` (compare speech-to-text on a recording)
+
+## Campaigns and leads
+
+Skill: `manage-calls-campaigns`.
+
+- `get_campaigns` / `create_campaign` / `update_campaign`
+- `get_campaign_results` / `export_campaign_report`
+- `campaigns_query` (`get_campaign`) / `campaigns_execute` (`pause_campaign`, `resume_campaign`, `test_campaign`)
+- `leads_query` (leads, statistics, `get_scheduled_calls`) / `leads_execute` (create, import, update, delete leads; `cancel_scheduled_calls`)
 
 ## Scenarios (test suites)
 
 Skill: `manage-calls-campaigns`. `toolCalls[].succeeded` is a transcript judge, not runtime truth.
 
-- `create_agent_scenario` / `list_agent_scenarios` / `get_agent_scenario`
-- `update_agent_scenario` / `delete_agent_scenario`
-- `generate_agent_scenarios`
-- `run_agent_scenario` / `run_agent_scenario_matrix` / `run_agent_scenario_suite`
-- `stop_agent_scenario_suite` / `get_agent_scenario_results`
-- `apply_scenario_improvements` / `dismiss_scenario_improvements`
+- `run_agent_scenario`
+- `scenarios_query` (`list_agent_scenarios`, `get_agent_scenario`, `get_agent_scenario_results`, `estimate_agent_test_run`, `generate_agent_scenarios`)
+- `scenarios_execute` (create, update, delete scenarios; `run_agent_scenario_matrix`, `run_agent_scenario_suite`, `stop_agent_scenario_suite`, `apply_scenario_improvements`, `dismiss_scenario_improvements`)
 
 ## Workflows
 
 Skill: `manage-workflows`. `apiCall` `headers` / `params` are lists of `{key, value}`. Query params go in `params`, not `queryParams`. Body is a raw JSON string plus `bodyType`.
 
-- `list_workflows` / `get_workflow` / `get_workflows`
-- `create_workflow` / `update_workflow` / `delete_workflow`
-- `run_workflow` / `test_workflow`
-- `add_workflow_trigger` / `update_workflow_trigger` / `remove_workflow_trigger`
-- `add_workflow_node` / `update_workflow_node` / `remove_workflow_node`
-- `add_switch_case`
-- `connect_workflow_nodes` / `disconnect_workflow_nodes`
-- `list_workflow_versions` / `save_workflow_version` / `delete_workflow_version`
+- `get_workflows` / `get_workflow` / `get_workflow_format` (node and trigger settings)
+- `create_workflow` / `create_workflow_from_template` / `update_workflow` (name, visibility) / `delete_workflow`
+- `edit_workflow`: one batch of trigger and node operations (add, update, remove, connect, disconnect, switch cases)
+- `test_workflow` / `run_workflow`
+- `versions_query` (`list_workflow_versions`) / `versions_execute` (`save_workflow_version`, `publish_workflow_version`, `delete_workflow_version`)
+- Assign to an agent: `update_agent_settings` section `workflows`
 
 Triggers: `onAPICall`, `onCallEnd`, `onCallStart`, `onKeywordDetected`, `duringCall`, `onEmailReceived`.
 
 Nodes: `emailConfig`, `apiCall`, `llmCompletion`, `sendSms`, `codeExecution`, `if`, `switch`, `loop`.
 
-## SMS and Viber
+## Messages and channels
 
 Skill: `manage-sms`.
 
-- `messages_execute` (action `send_sms`) / `messages_query` (action `get_sms`)
-- `messages_query` (action `list_sms_senders`) / `messages_execute` (action `add_sms_sender`) / `verify_sms_sender`
-- `messages_execute` (action `send_viber`)
+- `messages_query` (`get_sms`, `list_sms_senders`, `list_mailboxes`, `list_emails`, `get_email`)
+- `messages_execute` (`send_sms`, `send_viber`, `send_email`, `add_sms_sender`). A new SMS sender is verified by Voice Logica.
+- `channels_query` / `channels_execute`: Viber, WhatsApp and Messenger channels
 
-## Email
+Account mailboxes are not Voice Logica support tickets and not Freshdesk. Workflow sends use `emailConfig`.
 
-Account mailboxes (not Voice Logica support tickets, not Freshdesk).
+## Contacts and CRM records
 
-- `messages_query` (action `list_mailboxes`) / `messages_query` (action `list_emails`) / `messages_query` (action `get_email`) / `messages_execute` (action `send_email`)
+Skills: `manage-crm`, `manage-calendar-google-microsoft`.
 
-Workflow sends use `emailConfig`. Helpdesk tickets use `manage-helpdesk-ops`.
+- `list_contacts` / `create_or_update_contact` / `search_contact_activity` / `get_associate`
+- `list_contact_companies` / `get_contact_company` / `set_contact_company_stage`
+- `list_resources`
+- `crm_query` / `crm_execute`: company records, pipeline stages, custom fields, notes, Google Contacts sync, email copy address
+- `export_personal_data` / `erase_personal_data` (GDPR; erasure cannot be undone)
 
-## Google and Microsoft
+## Calendar
 
-Skill: `manage-calendar-google-microsoft`. Calendar ≠ Meet ≠ Chat. Outlook exists.
+Skill: `manage-calendar-google-microsoft`.
 
-- `list_contacts` / `create_or_update_contact`
-- `calendar_query` (action `list_calendars`) / `calendar_query` (action `list_calendar_events`)
-- `calendar_execute` (action `create_calendar_event`) / `calendar_execute` (action `update_calendar_event`)
-- `connect_google_chat` / `list_google_chat_spaces` / `send_google_chat_message`
-- `list_google_chat_members` / `get_google_chat_messages`
+- `calendar_query` (`list_calendars`, `list_calendar_events`) / `calendar_execute` (`create_calendar_event`, `update_calendar_event`)
 
-## Support tickets (Voice Logica app)
+## Integrations
 
-Skill: `create-support-ticket`. These are **not** email and **not** Freshdesk/Zendesk. File in the app (Contact Support) with Call IDs. Portal fallback: https://support.voicelogica.ai
+Skill: `manage-integrations`. Connect the integration → enable the agent tool → test with a Call ID.
 
-- `create_ticket` / `tickets_query` (action `list_tickets`) / `tickets_query` (action `get_ticket`)
-- `list_ticket_mentions` / `tickets_execute` (action `reply_to_ticket`) / `change_ticket_status`
-- `close_all_tickets` (admin)
+- `list_integrations` (providers and what is connected)
+- `connect_integration` (`provider`; optional `step`; step `disconnect` removes it)
+- `describe_integration` (`integration`) lists its actions
+- `integration_query` / `integration_execute` (`integration`, `action`, `data`): every per-integration action, e.g. HubSpot, Zoho, Salesforce, shops, ERPs, couriers, Jira, Outlook, Google Sheets, Docs and Drive
+- `eshop_query` (`get_eshop_sync_status`) / `eshop_execute` (`sync_eshop_products`, `clear_eshop_products`)
 
-## Company and billing
+Not self-serve: Odoo, Monday.com. Splynx is admin-only.
 
-Skill: `manage-company-billing`. `companyId` override is admin/reseller only. Normal users omit it.
+Private HTTP ERP → Tunnels (SSH, admin menu). Private PBX SIP/RTP → Phones → Edge Devices (WireGuard UDP 51820).
 
-- `list_companies` / `team_query` (action `list_company_users`) / `get_company_details`
+## Company, team and billing
+
+Skill: `manage-company-billing`.
+
 - `get_company_operating_hours` / `update_company_operating_hours`
-- `switch_company` / `team_execute` (action `request_company_access`) / `create_company`
-- `upgrade_plan` / `list_plans` / `billing_query` (action `list_add_ons`)
-- `billing_query` (action `get_payment_method`) / `billing_query` (action `get_subscription`)
-- `get_user_companies_by_email`
-- `get_associate` / `update_associate`
+- `get_caller_card_settings` / `update_caller_card_settings` / `manage_caller_card_custom_link`
+- `get_mcp_settings` / `update_mcp_settings` (default trunk, agent, SMS sender, calendar)
+- `list_plans` / `upgrade_plan` (charges the saved card; confirm plan and price first)
+- `billing_query` (`get_subscription`, `list_add_ons`, `get_payment_method`, `get_low_balance_alert`) / `billing_execute` (`cancel_subscription`, `resume_subscription`, `set_company_vat`, `set_low_balance_alert`)
+- `team_query` (`list_company_users`, `list_invitations`, `get_seats`) / `team_execute` (`invite_member`, `revoke_invitation`, `set_user_seat`, `buy_seats`: charges the card, confirm first)
+- `query_user_action` / `execute_user_action` (members)
+- `list_tasks` / `create_task` / `complete_task`; `tasks_query` / `tasks_execute` (task settings)
 
 Operating hours: `closedAllWeek` closes the week; an empty array errors. `syncWithGoogle` needs a linked Google Place. `seconds: 0` rejects calls as busy.
 
-## MCP settings
+`switch_company` and `list_companies` work only for resellers, account managers and admins. Normal users stay in their own company and omit `companyId`.
 
-- `get_mcp_settings` / `update_mcp_settings`
+## Support tickets (Voice Logica app)
 
-## Other
+Skill: `create-support-ticket`. These are **not** email and **not** Freshdesk/Zendesk. Include Call IDs. Help: https://docs.voicelogica.ai/support/ or support@voicelogica.ai.
 
-- `courier_create_return` — skill: `manage-helpdesk-ops`
-
-## Integrations reminder
-
-Connect the integration → enable the agent tool → test with a Call ID. See `manage-integrations`.
-
-Not self-serve: Odoo, Monday.com, WhatsApp. Splynx is admin-only.
-
-Private HTTP ERP → Tunnels (SSH, admin menu). Private PBX SIP/RTP → Phones → Edge Devices (WireGuard UDP 51820).
+- `create_ticket` / `tickets_query` (`list_tickets`, `get_ticket`) / `tickets_execute` (`reply_to_ticket`)
+- `report_unanswered_question` when the docs have no answer

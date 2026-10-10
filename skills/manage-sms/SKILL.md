@@ -1,6 +1,6 @@
 ---
 name: manage-sms
-description: Send SMS or Viber, manage sender IDs, and configure the send_sms agent tool. Use when the user wants texts from an agent, a new sender, verification, or garbled Greek / UTF-8 messages.
+description: Send SMS or Viber, manage sender IDs and messaging channels, and configure the send_sms agent tool. Use when the user wants texts from an agent, a new sender ID, Viber or WhatsApp channels, or garbled Greek / UTF-8 messages.
 ---
 
 # Manage Voice Logica SMS and Viber
@@ -10,17 +10,19 @@ description: Send SMS or Viber, manage sender IDs, and configure the send_sms ag
 - `messages_execute` (action `send_sms`)
 - `messages_query` (action `get_sms`)
 - `messages_query` (action `list_sms_senders`)
-- `messages_execute` (action `add_sms_sender`)
-- `verify_sms_sender`
+- `messages_execute` (action `add_sms_sender`) — Voice Logica then verifies the sender
 - `messages_execute` (action `send_viber`)
+- Viber / WhatsApp / Messenger channels: `channels_query` / `channels_execute`
 
-Agent tool: `send_sms` on the agent (`list_agent_tools` / `update_agent_tool`) with a `senderId`.
+Call `messages_query` with no action to list its actions and inputs.
+
+Agent tool: `send_sms` on the agent (`get_agent_settings` / `update_agent_settings` section `tools`) with a `senderId`.
 
 Sender management in the app is **admin or account-manager**.
 
 ## 3-layer rule
 
-1. Add and verify a sender (`messages_execute` (action `add_sms_sender`) → `verify_sms_sender`).
+1. Add a sender (`messages_execute` action `add_sms_sender`). Voice Logica verifies it.
 2. Set `senderId` on the agent's `send_sms` tool.
 3. Test with a Call ID or a one-off `messages_execute` (action `send_sms`), then `messages_query` (action `get_sms`). Always test to a **real phone**.
 
@@ -52,7 +54,7 @@ Two routes. Notification SMS (`analysisSmsConfig` / `phoneNumbers` / `sendSmsCon
 
 **Route B — any other condition (proven).**
 
-1. Add analysis properties (`update_agent_analysis_config` **replaces the whole array** — `get_agent_analysis_config` first). Typical pair: `booked` (boolean) + `messageToUser` (string). Types: `string | number | boolean | array | date | time | enum | object`. The property **description** is the model instruction.
+1. Add analysis properties (`update_agent_settings` section `analysis` **replaces the whole array** — read it with `get_agent_settings` first). Typical pair: `booked` (boolean) + `messageToUser` (string). Types: `string | number | boolean | array | date | time | enum | object`. The property **description** is the model instruction.
 2. `onCallEnd` workflow: `if` on `booked` → `sendSms` body `{{messageToUser}}`.
 3. Analysis properties interpolate **flat**: `{{booked}}`, `{{messageToUser}}`. `{{call.postAnalysisResults.booked}}` does **not** work.
 
@@ -66,7 +68,7 @@ Letting the model write `messageToUser` beats stitching date/time fields.
 List senders, pick a verified one, set `senderId` on the agent `send_sms` tool, add a prompt rule for when to text, then test with a Call ID.
 
 **"Add a sender."**
-`messages_execute` (action `add_sms_sender`), then `verify_sms_sender`. Do not send from an unverified sender.
+`messages_execute` (action `add_sms_sender`). Voice Logica verifies it. Do not send from an unverified sender.
 
 **"Send a Viber message."**
 Use `messages_execute` (action `send_viber`). Confirm the destination and sender first. This is not `messages_execute` (action `send_sms`).

@@ -1,6 +1,6 @@
 ---
 name: manage-phones
-description: List, register, and assign Voice Logica VoIP phones and numbers to AI agents, including SIP, extensions, inbound DIDs, and PBX edge devices. Use when the user asks about DIDs, SIP phones, extensions, inbound numbers, registration, one-way audio, or why an agent has no phone.
+description: Set up Voice Logica phone lines: SIP trunks, numbers, inbound and outbound routes, office PBX connection, and edge devices, and assign numbers to AI agents. Use when the user asks about DIDs, SIP trunks, extensions, inbound numbers, registration, one-way audio, or why an agent has no phone.
 ---
 
 # Manage Voice Logica phones
@@ -9,13 +9,20 @@ Use Voice Logica MCP phone tools. Do not invent numbers, SIP credentials, or age
 
 ## MCP tools
 
-- `get_voip_phones` / `create_voip_phone` / `update_voip_phone` / `delete_voip_phone`
-- `activate_voip_phone` / `deactivate_voip_phone`
-- `pbx_query` (action `get_edge_installer`) / `pbx_query` (action `get_edge_devices`) / `set_edge_device_forward` / `remove_edge_device_forward`
+- `get_sip_trunks` / `create_sip_trunk` / `update_sip_trunk` — phone lines (SIP trunks)
+- `connect_pbx` — connect an office PBX
+- `get_free_number` — free Greek number
+- `get_user_phone_setup` — the user's own devices, extension, SIP credentials, app links
+- `telephony_query` (actions `list_numbers`, `list_inbound_routes`, `get_inbound_route`, `list_outbound_routes`, `get_outbound_route`, `get_call_settings`, `get_user_call_settings`)
+- `telephony_execute` (actions `add_numbers`, `update_number`, `remove_number`, `create_inbound_route`, `update_inbound_route`, `delete_inbound_route`, `create_outbound_route`, `update_outbound_route`, `delete_outbound_route`, `update_call_settings`, `update_user_call_settings`, `send_device_setup`)
+- `pbx_query` (actions `check_pbx_connection`, `get_sip_logs`, `get_trunk_sip_logs`, `get_edge_devices`, `get_edge_installer`)
+- `pbx_execute` (actions `claim_edge_device`, `set_edge_media_ports`, `update_edge_device`)
+
+Any `<area>_query` called with no action lists that area's actions and inputs. Do that instead of guessing action names. Edge device port forwards: ask Voice Logica support.
 
 ## Before changing anything
 
-1. List phones and list agents. Match by name, then use real IDs.
+1. List trunks / numbers (`get_sip_trunks`, `telephony_query` action `list_numbers`) and list agents. Match by name, then use real IDs.
 2. If the user names a number, find that exact registration first.
 3. Confirm the target agent before assigning or moving a number.
 4. If inbound calls never appear in Voice Logica at all (zero Call IDs in the window), traffic never reached the platform — treat it as carrier / portability / PBX routing first, not a prompt bug.
@@ -51,10 +58,10 @@ Ask the user for the values their PBX issued. Typical fields:
 
 They may need to whitelist the Voice Logica SIP/media IP on the PBX and allow **UDP 5060** plus RTP (typically **10000–20000**). Registration refresh is often **3600** seconds. Do not invent the Voice Logica IP — use the value they were given or ask Voice Logica.
 
-What they provide back: server, port, extension/username, auth ID, password, codec. Enter those in Phones. Then `create_voip_phone` / `activate_voip_phone`. Confirm registration, a test dial, and two-way audio.
+What they provide back: server, port, extension/username, auth ID, password, codec. Enter those in Phones, or `create_sip_trunk` (or `connect_pbx` for an office PBX). Confirm registration (`pbx_query` action `check_pbx_connection`), a test dial, and two-way audio.
 
 **Internal extension as a transfer destination.**
-Register that extension as a VoIP phone first, then reference it in the agent transfer prompt (`edit-voice-agents`). Without credentials in Phones, extension transfer fails even if Transfer Connection looks correct.
+Register that extension as a SIP trunk in Phones first, then reference it in the agent transfer prompt (`edit-voice-agents`). Without credentials in Phones, extension transfer fails even if Transfer Connection looks correct.
 
 **Private on-prem PBX (Edge Device), done from the chat.**
 

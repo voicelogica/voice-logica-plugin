@@ -1,6 +1,6 @@
 ---
 name: manage-calls-campaigns
-description: Review Voice Logica calls, start outbound or bulk campaigns, and run agent test scenarios. Use when the user wants call logs, SIP logs, scheduled calls, or scenario suites — and when a scenario judge disagrees with a real Call ID.
+description: Review Voice Logica calls, run outbound calls and campaigns with leads, and run agent test scenarios. Use when the user wants call transcripts, statistics, SIP logs, campaign results, scheduled calls, or scenario suites — and when a scenario judge disagrees with a real Call ID.
 ---
 
 # Manage calls, campaigns, and scenarios
@@ -10,15 +10,18 @@ Use Call IDs. Do not invent them. Do not chase model or temperature first — th
 ## Call MCP tools
 
 - `get_calls` — list calls
-- `get_calls` (include `aiDialogue`) — calls plus the prompt used
+- `get_calls` (include `aiDialogue`) — calls plus the turn-by-turn dialogue and tool calls
 - `get_call_statistics` — aggregates
-- `get_call_logs` — application / tool logs for a call
 - `pbx_query` (action `get_sip_logs`) — signaling
-- `get_full_call` — full call record
 - `get_managed_agent_sessions` — live / managed sessions
 - `initiate_call` — one outbound call
 - `initiate_bulk_calls` — campaign / bulk outbound
-- `get_scheduled_calls` / `cancel_scheduled_calls`
+- `assistant_call`, `set_call_recording`, `get_compliance_report`
+- `leads_query` (action `get_scheduled_calls`) / `leads_execute` (action `cancel_scheduled_calls`)
+- Campaigns: `get_campaigns`, `create_campaign`, `update_campaign`, `get_campaign_results`, `export_campaign_report`, `campaigns_query` (action `get_campaign`), `campaigns_execute` (actions `pause_campaign`, `resume_campaign`, `test_campaign`)
+- Leads: `leads_query` / `leads_execute` (e.g. `get_campaign_leads`, `create_campaign_leads`, `import_campaign_leads`, `update_campaign_lead`, `delete_campaign_lead`)
+
+Any `<area>_query` called with no action lists that area's actions and inputs. Do that instead of guessing action names.
 
 Default list window: last 7 days unless the user asked for another range. Summarize outcome, duration, and agent.
 
@@ -32,17 +35,15 @@ Default list window: last 7 days unless the user asked for another range. Summar
 
 If the call completed, a transcript exists, and audio should exist (not a transfer check-leg / not a 2-second hangup), file a ticket (`create-support-ticket`) with that Call ID. Do not invent an archive button.
 
-Incomplete / cut-off audio: collect Call ID + timestamp in the recording (TTS cut, caller hangup, transfer mid-utterance, or network). Then diagnose from `get_full_call` / `get_call_logs`.
+Incomplete / cut-off audio: collect Call ID + timestamp in the recording (TTS cut, caller hangup, transfer mid-utterance, or network). Then diagnose from `get_calls` (include `aiDialogue`).
 
 ## Scenario MCP tools
 
-- `create_agent_scenario` / `list_agent_scenarios` / `get_agent_scenario`
-- `update_agent_scenario` / `delete_agent_scenario`
-- `generate_agent_scenarios`
-- `run_agent_scenario` / `run_agent_scenario_matrix` / `run_agent_scenario_suite`
-- `stop_agent_scenario_suite`
-- `get_agent_scenario_results`
-- `apply_scenario_improvements` / `dismiss_scenario_improvements`
+- `run_agent_scenario`
+- `scenarios_query` (actions `list_agent_scenarios`, `get_agent_scenario`, `get_agent_scenario_results`, `estimate_agent_test_run`, `generate_agent_scenarios`)
+- `scenarios_execute` (actions `create_agent_scenario`, `update_agent_scenario`, `delete_agent_scenario`, `run_agent_scenario_matrix`, `run_agent_scenario_suite`, `stop_agent_scenario_suite`, `apply_scenario_improvements`, `dismiss_scenario_improvements`)
+
+To just hear the agent: `get_my_agent`, `test_in_browser`, `call_me`, then `get_call_result`.
 
 Tests / scenarios tab is admin, super-admin, or account-manager.
 
@@ -57,7 +58,7 @@ The transcript often omits tool responses. A tool can return HTTP 200 and still 
 When a scenario says a tool failed:
 
 1. Get a real **Call ID** (or the scenario's underlying call if one exists).
-2. Confirm with `get_call_logs` / `get_full_call`: function about to run, API status, agent received the result.
+2. Confirm with `get_calls` (include `aiDialogue`) and `get_managed_agent_sessions`: function about to run, API status, agent received the result.
 3. Only then change the prompt, tool, or workflow.
 
 Do not conclude a workflow or CRM write failed from a scenario field alone. Do not apply scenario improvements without showing the user what they change.
@@ -89,13 +90,13 @@ Respect quiet hours, consent, and local outbound laws. Start with a small list.
 ## Common jobs
 
 **"What happened on this call?"**
-Take the Call ID. `get_full_call` + `get_call_logs`. Use `pbx_query` (action `get_sip_logs`) for one-way audio, no-answer, or registration issues. Open `troubleshoot-voice-agents` if it is a diagnosis. Zero Call IDs in the window → traffic never reached Voice Logica (`manage-phones`).
+Take the Call ID. `get_calls` (include `aiDialogue`). Use `pbx_query` (action `get_sip_logs`) for one-way audio, no-answer, or registration issues. Open `troubleshoot-voice-agents` if it is a diagnosis. Zero Call IDs in the window → traffic never reached Voice Logica (`manage-phones`).
 
 **"Call this number now / start a campaign."**
-Confirm the agent and caller ID / phone first (`manage-phones`). Confirm `billing_query` (action `get_subscription`) has seconds remaining (0 seconds = busy, not a SIP fault). Then `initiate_call` or `initiate_bulk_calls`. For later, use scheduled calls and `get_scheduled_calls`.
+Confirm the agent and caller ID / phone first (`manage-phones`). Confirm `billing_query` (action `get_subscription`) has seconds remaining (0 seconds = busy, not a SIP fault). Then `initiate_call` or `initiate_bulk_calls`. For later, use scheduled calls and `leads_query` (action `get_scheduled_calls`).
 
 **"Cancel scheduled outbound."**
-`get_scheduled_calls`, match the batch, then `cancel_scheduled_calls`. Confirm how many were cancelled.
+`leads_query` (action `get_scheduled_calls`), match the batch, then `leads_execute` (action `cancel_scheduled_calls`). Confirm how many were cancelled.
 
 **"Generate and run test scenarios."**
 `generate_agent_scenarios` or `create_agent_scenario`, then `run_agent_scenario` / matrix / suite. Read `get_agent_scenario_results` as a hint, then verify failures on Call IDs.

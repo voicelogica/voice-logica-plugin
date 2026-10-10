@@ -15,13 +15,17 @@ Voice Logica **app** support tickets are a different product. Those use `create_
 - **Work trackers:** Jira (`jira`), ClickUp (`clickup`), Trello (no default agent tool — workflows / MCP), Airtable (`airtable`)
 - **Hospitality:** Guesty (`guesty`), Hosthub (`hosthub`), WebHotelier (`webhotelier`)
 - **Payments / messaging ops:** Viva (mainly workflow payment-link; demo vs live + optional sourceCode), Yuboto
-- **Couriers:** ACS, Speedex, Geniki, ELTA, BOX NOW, Skroutz Last Mile — agent tool `courier` plus MCP `courier_create_return`
+- **Couriers:** ACS, Speedex, Geniki, ELTA, BOX NOW, Skroutz Last Mile — agent tool `courier` plus MCP `integration_execute` (integration `courier`, action `create_return`)
 
-Read `list_agent_tools` for the live names. Do not invent MCP connect helpers that are not in `use-voice-logica-mcp`.
+Read `get_agent_settings` section `tools` for the live names. Connect with `connect_integration` and `provider` (step `disconnect` removes it).
 
 ## MCP tools
 
-- `courier_create_return` — create a courier return shipment
+- `connect_integration` — connect a provider (`freshdesk`, `zendesk`, `trello`, `clickup`, `courier`, …)
+- `list_integrations` / `describe_integration` — what is connected and which actions each one has
+- `integration_query` / `integration_execute` (`integration`, `action`, `data`) — run an integration action, e.g. integration `courier`, action `create_return`
+
+Call `describe_integration` first. Do not guess action names.
 
 Other helpdesk / board / payment actions go through the connected integration and the agent or workflow (`apiCall`, `emailConfig`). Email mailboxes (`messages_query` (action `list_mailboxes`), `messages_query` (action `list_emails`), `messages_query` (action `get_email`), `messages_execute` (action `send_email`)) are account email, not a Freshdesk ticket.
 
@@ -60,10 +64,10 @@ If OAuth shows `needsReconnect`, disconnect and reconnect.
 Confirm the helpdesk integration is connected and the agent or `onCallEnd` workflow writes the ticket. Test with a Call ID. This is not `create_ticket`.
 
 **"Create a courier return."**
-Use `courier_create_return` with the real order / tracking fields the user provides. Do not invent tracking numbers. Ask which courier.
+Use `integration_execute` (integration `courier`, action `create_return`) with the real order / tracking fields the user provides. Do not invent tracking numbers. Ask which courier.
 
 **"Push the call into Jira / ClickUp / Trello / Airtable."**
-Connect that integration, then wire a workflow node or agent tool. Confirm on a test item, not only from the agent saying it did. Do not promise a Trello voice tool unless `list_agent_tools` shows one.
+Connect that integration, then wire a workflow node or agent tool. Confirm on a test item, not only from the agent saying it did. Do not promise a Trello voice tool unless section `tools` shows one.
 
 **"Guesty / Hosthub / WebHotelier booking."**
 Same 3-layer rule. Confirm property/site codes.

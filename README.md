@@ -9,9 +9,9 @@ The default MCP is the hosted endpoint at https://api.voicelogica.ai/api/v1/mcp.
 - List, create, and edit AI voice agents (prompts, greetings, languages, voices, versions)
 - Change transfer, end-call, analysis, notification, memory, and appointment settings
 - Turn agent tools on or off (SMS, appointments, e-shop, HubSpot, silence, IVR, and more)
-- Register VoIP phones, assign numbers, and manage edge-device forwards
+- Set up SIP trunks, numbers, inbound and outbound routes, office PBX and edge devices
 - Connect CRM, e-commerce, ERP, calendar, SMS, and helpdesk integrations, then test them on a Call ID
-- Book on Google or Microsoft calendars, manage contacts, and use Google Chat
+- Book on Google or Microsoft calendars and manage contacts and CRM records
 - Send SMS or Viber and manage verified senders
 - Build workflows (call start/end, keywords, email, API) and assign them to agents
 - Review calls, SIP logs, outbound campaigns, and scheduled calls
@@ -103,12 +103,12 @@ Same folder, several submissions. Listing on one store does not list you on the 
     skills/edit-voice-agents                Editor tabs, prompts, knowledge files
     skills/fix-agent-behavior               Call behavior fixes
     skills/troubleshoot-voice-agents        Diagnose with Call IDs and tool logs
-    skills/manage-phones                    VoIP phones, DIDs, assign numbers to agents
+    skills/manage-phones                    SIP trunks, numbers, routes, PBX, edge devices
     skills/manage-integrations              3-layer connect → enable tool → test Call ID
     skills/manage-crm                       HubSpot, Zoho, Salesforce
     skills/manage-ecommerce                 Woo, Shopify, and eshop_integration
     skills/manage-erp                       Soft1, Galaxy, Pylon, Entersoft, tunnels
-    skills/manage-calendar-google-microsoft Calendar, contacts, Chat, appointments
+    skills/manage-calendar-google-microsoft Calendar, contacts, appointments
     skills/manage-sms                       SMS / Viber senders
     skills/manage-helpdesk-ops              Freshdesk, Jira, couriers, payments
     skills/manage-workflows                 Triggers, nodes, versions, apiCall shape

@@ -1,6 +1,6 @@
 ---
 name: manage-company-billing
-description: List Voice Logica companies, users, plans, add-ons, payment method, and subscription, and update operating hours. Use when the user wants billing, plan upgrades, company switch, or open/closed hours.
+description: Manage the Voice Logica plan, add-ons, payment method, subscription, team members, seats, and operating hours. Use when the user wants billing, plan changes, low-balance alerts, inviting members, seats, or open/closed hours.
 ---
 
 # Manage company and billing
@@ -11,23 +11,25 @@ Report what the API returns. Do not guess prices or invent plan names. Never men
 
 Company:
 
-- `list_companies`
-- `team_query` (action `list_company_users`)
-- `get_company_details`
 - `get_company_operating_hours` / `update_company_operating_hours`
-- `switch_company`
-- `team_execute` (action `request_company_access`)
-- `create_company`
-- `get_user_companies_by_email`
-- `get_associate` / `update_associate`
+- `team_query` (actions `list_company_users`, `list_invitations`, `get_seats`)
+- `team_execute` (actions `invite_member`, `revoke_invitation`, `set_user_seat`, `request_company_access`, `buy_seats` — charges the card, confirm first)
+- `query_user_action` / `execute_user_action` for members
+- `get_caller_card_settings` / `update_caller_card_settings`
+- `get_mcp_settings` / `update_mcp_settings`
+- `get_associate`
+- `list_companies` / `switch_company` — admins, resellers, and account managers only
+
+Staff-only tools are not in the public plugin.
 
 Billing:
 
 - `upgrade_plan`
 - `list_plans`
-- `billing_query` (action `list_add_ons`)
-- `billing_query` (action `get_payment_method`)
-- `billing_query` (action `get_subscription`)
+- `billing_query` (actions `get_subscription`, `list_add_ons`, `get_payment_method`, `get_low_balance_alert`)
+- `billing_execute` (actions `cancel_subscription`, `resume_subscription`, `set_company_vat`, `set_low_balance_alert`)
+
+Any `<area>_query` called with no action lists that area's actions and inputs. Do that instead of guessing action names.
 
 Refunds, credit notes, invoices → billing@voicelogica.ai. Do not promise amounts or timelines.
 
@@ -35,7 +37,7 @@ Refunds, credit notes, invoices → billing@voicelogica.ai. Do not promise amoun
 
 `companyId` on these tools is **admin / reseller only**.
 
-Normal users must omit it and operate on the current company. If a normal user passes another company's id, the call fails or hits the wrong tenant. If they need another company, use `list_companies` / `switch_company` / `team_execute` (action `request_company_access`).
+Normal users must omit it and operate on the current company. If a normal user passes another company's id, the call fails or hits the wrong tenant. If they need another company, use `team_execute` (action `request_company_access`), or `list_companies` / `switch_company` if they are admin / reseller / account manager.
 
 ## Check the subscription before calling a feature missing
 
@@ -83,11 +85,11 @@ Hours also feed **Block transfer when company is closed** (`edit-voice-agents`).
 **"Upgrade the plan."**
 `list_plans` first. Show the current plan and the target. `upgrade_plan` only after the user confirms.
 
-**"Switch company."**
+**"Switch company."** (admin / reseller / account manager)
 `list_companies`, match by name, `switch_company`. Then list agents on the new company so later edits hit the right tenant.
 
-**"Create a company / request access."**
-`create_company` or `team_execute` (action `request_company_access`) with the details they gave. Do not create a company because list was empty without asking.
+**"Request access to a company."**
+`team_execute` (action `request_company_access`) with the details they gave. New companies come from signup at https://app.voicelogica.ai.
 
 **"Set hours / we are closed this week."**
 Use `closedAllWeek` for a full close. For normal hours, send the full week the API expects, not a partial empty list.

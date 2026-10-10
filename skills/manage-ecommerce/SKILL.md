@@ -10,7 +10,7 @@ Supported shops: **WooCommerce**, **Shopify**, **OpenCart**, **Magento**, **Pres
 ## 3-layer rule
 
 1. Connect the shop integration on the company (API key / OAuth / custom URL).
-2. Enable the shop tool on the agent (`list_agent_tools` / `update_agent_tool`). Read the live name — often `eshop_integration`, or a shop-specific name such as `woocommerce` / `shopify` / `opencart` / `magento` / `megasoft` / `custom_api`. **PrestaShop** has no default voice-agent tool; use workflows / MCP and do not promise a voice tool unless `list_agent_tools` shows one.
+2. Enable the shop tool on the agent (`get_agent_settings` / `update_agent_settings` section `tools`). Read the live name — often `eshop_integration`, or a shop-specific name such as `woocommerce` / `shopify` / `opencart` / `magento` / `megasoft` / `custom_api`. **PrestaShop** has no default voice-agent tool; use workflows / MCP and do not promise a voice tool unless section `tools` shows one.
 3. Test with a Call ID. Confirm the tool ran and the agent used the result.
 
 Never paste live shop API tokens into chat. Guide the user to paste them into the Voice Logica form.
@@ -64,7 +64,7 @@ Check the shop is connected, the agent tool is on, `aiEnabled` is true (when tha
 Update `url` on the tool. Do not leave the old host in the prompt. Retest with a Call ID.
 
 **"Sync feels stale."**
-Check `interval` and whether the last sync finished. Do not lower interval as a first guess if the tool never fired.
+Check `interval` and whether the last sync finished (`eshop_query` action `get_eshop_sync_status`; resync with `eshop_execute` action `sync_eshop_products`). Do not lower interval as a first guess if the tool never fired.
 
 ## After a change
 

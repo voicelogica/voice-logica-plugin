@@ -36,15 +36,16 @@ Write the body in the user language. Put IDs in as plain text.
 
 - `create_ticket`
 - `tickets_query` (action `list_tickets`) / `tickets_query` (action `get_ticket`)
-- `list_ticket_mentions` / `tickets_execute` (action `reply_to_ticket`) / `change_ticket_status`
-- `close_all_tickets` — admin only; do not use unless the user asked
+- `tickets_execute` (action `reply_to_ticket`)
+
+Call `tickets_query` with no action to list its actions and inputs. Status changes are done by Voice Logica staff.
 
 ## How to create
 
 1. `tickets_query` (action `list_tickets`) first. If an open ticket already covers this, `tickets_execute` (action `reply_to_ticket`) instead of a duplicate.
 2. `create_ticket` with the subject and body above. Always include Call IDs and agent IDs in the body when you have them.
 3. Return the ticket ID and a one-line summary of what you filed.
-4. If create fails or no ticket tool is available, say so and give the Support portal: https://support.voicelogica.ai — tell them to file there with the same Call IDs.
+4. If create fails or no ticket tool is available, say so and point them to https://docs.voicelogica.ai/support/ or support@voicelogica.ai — tell them to include the same Call IDs.
 
 ## After create
 

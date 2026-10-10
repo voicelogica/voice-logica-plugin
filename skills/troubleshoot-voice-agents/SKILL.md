@@ -19,7 +19,7 @@ Expired / zero-second subscriptions look like random product bugs. `billing_quer
 
 1. `billing_query` (action `get_subscription`) — active? `seconds` remaining? Plan feature for the missing tab?
 2. Any Call IDs in the window? **Zero** → traffic never reached Voice Logica (`manage-phones`).
-3. Phone still registered? (`get_voip_phones`)
+3. Phone line still registered? (`get_sip_trunks`, `pbx_query` action `check_pbx_connection`)
 4. Prompt size (`get_agent_prompt`) — approaching / above ~20k characters → extract facts to knowledge, do not add more rules (`edit-voice-agents`).
 5. Last change (prompt, transfer settings, integration, hours).
 
@@ -39,7 +39,7 @@ If the agent speaks JSON / tool names / brackets, collect Call ID + timestamp an
 
 Scenario or judge fields like `toolCalls[].succeeded` are a model reading the transcript. The transcript often does not include tool responses. A tool can return HTTP 200 and still look failed there.
 
-Confirm against real call logs for that Call ID: function about to run, API status, then the agent receiving the result.
+Confirm against the real call for that Call ID (`get_calls` with `aiDialogue`; SIP via `pbx_query` action `get_sip_logs`): function about to run, API status, then the agent receiving the result.
 
 Do not conclude a workflow failed from a scenario result alone.
 
@@ -47,7 +47,7 @@ A request that works in Postman but fails (or returns a plausible-wrong 200) fro
 
 ## Transfers and telephony
 
-- Agent transferred when it should not have: read `promptForTransferReason` first (`get_agent_transfer_settings`), not only the system prompt. See `edit-voice-agents`.
+- Agent transferred when it should not have: read `promptForTransferReason` first (`get_agent_settings` section `transfer`), not only the system prompt. See `edit-voice-agents`.
 - "I'll transfer" but nothing happens: Follow Prompt Instructions, destination mapping, extension SIP creds, hours block, `"transferring"` not in `endCallReasons`.
 - Attended / warm fails (SIP REFER declined, dest never rings, broken check-leg): switch to **blind**. File a ticket if they still need attended — Call ID, dest type, whether dest rang. Not a prompt bug.
 - Zero Call IDs in the window: traffic never reached Voice Logica → carrier / portability / PBX (`manage-phones`).

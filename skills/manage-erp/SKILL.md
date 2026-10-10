@@ -15,7 +15,7 @@ Self-serve ERPs: **Soft1**, **Galaxy Drugstore**, **Galaxy ERP**, **Pylon**, **E
 ## 3-layer rule
 
 1. Connect the ERP integration on the company. Choose **Cloud URL** (public HTTPS) or **On-prem tunnel**.
-2. Enable the matching agent tool (`list_agent_tools`). Documented names: `soft1_erp`, `galaxy_drugstore`, `galaxy_erp`, `pylon_erp`, `entersoft_one`. Read the live list — do not invent.
+2. Enable the matching agent tool (`get_agent_settings` section `tools`). Documented names: `soft1_erp`, `galaxy_drugstore`, `galaxy_erp`, `pylon_erp`, `entersoft_one`. Read the live list — do not invent.
 3. Test with a Call ID and read `toolCalls`.
 
 Never paste live ERP API tokens into chat.
@@ -47,7 +47,7 @@ Tunnel checklist: status up, site service running, outbound SSH allowed, local h
 ## Common jobs
 
 **"Which ERP is connected?"**
-List company integrations and the agent's tools. Say what is connected vs what this agent can use.
+`list_integrations` and the agent's section `tools`. Say what is connected vs what this agent can use.
 
 **"On-prem Soft1 / custom HTTP."**
 Confirm a tunnel exists, the URL is the tunneled host (not a public guess), then enable the tool and test with a Call ID.

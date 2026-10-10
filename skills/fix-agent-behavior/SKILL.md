@@ -58,8 +58,8 @@ If the transcript shows the agent talking to itself, check echo / enable `lock_o
 
 **Out-of-hours transfers.** Enable business hours, block transfer when closed, use an off-hours greeting or message flow. Also read the transfer settings prompt first (`edit-voice-agents`) — a bare number table will dial as soon as a person is identified.
 
-**Transferred when it should not have.** Start at `promptForTransferReason` (`get_agent_transfer_settings`), not the system prompt. See `edit-voice-agents`. Attended / warm failures (SIP REFER) are telephony — switch to blind; do not add more transfer prose.
+**Transferred when it should not have.** Start at `promptForTransferReason` (`get_agent_settings` section `transfer`), not the system prompt. See `edit-voice-agents`. Attended / warm failures (SIP REFER) are telephony — switch to blind; do not add more transfer prose.
 
 ## After a change
 
-Say what you changed, ask them to retest with a new Call ID, and keep one issue per pass. `save_agent_version` after a working change.
+Say what you changed, ask them to retest with a new Call ID, and keep one issue per pass. `versions_execute` (action `save_agent_version`) after a working change.
