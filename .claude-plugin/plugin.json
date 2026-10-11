@@ -9,6 +9,11 @@
     "url": "https://voicelogica.ai"
   },
   "homepage": "https://voicelogica.ai",
+  "repository": "https://github.com/voicelogica/voice-logica-plugin",
+  "documentationUrl": "https://docs.voicelogica.ai",
+  "supportUrl": "mailto:support@voicelogica.ai",
+  "privacyPolicyUrl": "https://legal.voicelogica.ai/privacy",
+  "termsOfServiceUrl": "https://legal.voicelogica.ai/terms",
   "license": "MIT",
   "keywords": [
     "voice",
