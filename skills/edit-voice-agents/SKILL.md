@@ -136,6 +136,8 @@ Do not put API keys or internal tool names in customer-facing prompt text.
 
 Callback number: the agent asks whether it is the number the caller is calling from, without saying it ("Να σας καλέσουμε στο τηλέφωνο από το οποίο μας καλείτε;"). A yes means `{{phone_number}}` and the agent moves on. Only a different number is taken down and read back. Reading the caller's own number back is slow and adds nothing.
 
+Welcome message: start with `{{greeting}}` (Καλημέρα before 12:00 / Καλησπέρα after, company time zone), then the agent's name as the company's digital assistant (Greek: company in the genitive), then one question. Open: «{{greeting}} σας. Είμαι η Δανάη, η ψηφιακή βοηθός του λογιστικού γραφείου PKP. Πώς θα μπορούσα να σας βοηθήσω;». Closed (`phoneFirstMessageOffHours`): same, plus «Αυτή τη στιγμή είμαστε κλειστά, αλλά πείτε μου πώς θα μπορούσα να σας βοηθήσω.». Set with `update_agent_settings` section `"welcome"`.
+
 ## Prompt / analysis variables
 
 Two scopes with different names:
