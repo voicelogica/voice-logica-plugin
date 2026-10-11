@@ -50,7 +50,7 @@ When the person asks about **their own** tasks, callbacks, calls, extension or a
 Skill: `edit-voice-agents` (behavior: `fix-agent-behavior`).
 
 - `get_agents` / `get_agent` / `create_agent`
-- `get_agent_prompt` / `edit_agent_prompt` (find/replace or append; pass `prompt` for a full rewrite)
+- `get_agent_prompt` / `edit_agent_prompt` (find/replace or append; send `prompt` for a full rewrite)
 - `get_agent_settings` (`sections`: one or more; `format: true` lists the fields) / `update_agent_settings` (one `section` plus `changes`). Sections: welcome, voice, languages, transfer, end_call, interruption, memory, analysis, notifications, appointments, ai_disclosure, standby, tools, workflows, pronunciation, transcription, widget
 - `list_voices` / `rename_voice`; `agents_query` (`list_cloned_voices`) / `agents_execute` (`clone_voice`, `delete_cloned_voice`, `delete_agent`)
 - `versions_query` (`list_agent_versions`, `get_agent_publish_history`) / `versions_execute` (`save_agent_version`, `publish_agent_version`, `delete_agent_version`)
@@ -124,7 +124,7 @@ Skill: `manage-calls-campaigns`. `toolCalls[].succeeded` is a transcript judge, 
 Skill: `manage-workflows`. `apiCall` `headers` / `params` are lists of `{key, value}`. Query params go in `params`, not `queryParams`. Body is a raw JSON string plus `bodyType`.
 
 - `get_workflows` / `get_workflow` / `get_workflow_format` (node and trigger settings)
-- `create_workflow` / `create_workflow_from_template` / `update_workflow` (name, visibility) / `delete_workflow`
+- `create_workflow` / `create_workflow_from_template` (SMS link, email summary) / `create_api_lookup_workflow` / `create_webhook_workflow` / `update_workflow` (name, visibility) / `delete_workflow`
 - `edit_workflow`: one batch of trigger and node operations (add, update, remove, connect, disconnect, switch cases)
 - `test_workflow` / `run_workflow`
 - `versions_query` (`list_workflow_versions`) / `versions_execute` (`save_workflow_version`, `publish_workflow_version`, `delete_workflow_version`)

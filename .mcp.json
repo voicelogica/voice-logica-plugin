@@ -1,6 +1,7 @@
 {
   "mcpServers": {
     "voice-logica": {
+      "type": "http",
       "url": "https://api.voicelogica.ai/api/v1/mcp"
     }
   }

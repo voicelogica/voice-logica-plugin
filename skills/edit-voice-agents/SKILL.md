@@ -15,7 +15,7 @@ Order of operations:
 2. `get_agents` — do not create a duplicate name.
 3. `create_agent` with the name and details they gave. Then `get_agent` and configure the rest with the tools below. Do not invent a create payload schema.
 4. Switch the agent to **Power View** if they need transfers, tools, analysis, or end-call (`viewMode` is per agent: `business` | `power`). Business View shows only AI Assistant + Languages.
-5. Prompt (`edit_agent_prompt`; pass `prompt` for a full rewrite) and welcome (`update_agent_settings` section `welcome`). Do not put the same greeting in both.
+5. Prompt (`edit_agent_prompt`; send `prompt` for a full rewrite) and welcome (`update_agent_settings` section `welcome`). Do not put the same greeting in both.
 6. Languages / voices: `get_agent_settings` / `update_agent_settings` section `languages`, plus `list_voices`.
 7. End-call: `get_agent_settings` / `update_agent_settings` section `end_call`. Never put `"transferring"` in `endCallReasons`.
 8. Transfers if needed — see below. Always read section `transfer` first.

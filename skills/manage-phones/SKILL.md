@@ -69,7 +69,7 @@ Register that extension as a SIP trunk in Phones first, then reference it in the
 2. Firewall: outbound **UDP 51820** and outbound **TCP 443** to the edge gateway. TCP 443 alone can look **Online** with **no calls / no audio**.
 3. Poll `pbx_query` (action `get_edge_devices`) until `ready: true`. Pending devices are approved on read. `online: true` with `tunnelUp: false` = UDP 51820 blocked.
 4. Ask for the PBX LAN IP, SIP port (Panasonic often **5060**, Alcatel OXO often **5059**) and the extension username/password. If the user does not know the IP, show `pbxCandidates` and confirm one.
-5. `create_sip_trunk` with `host` = PBX LAN IP, `port`, `transport: "udp"`, `inboundAuthType`/`outboundAuthType: "registration"`, `username`, `password`. A private IP is routed through the edge device automatically (the only device, or the one on the PBX subnet; pass `edgeDeviceId` if several match). It waits for the device and registers before returning.
+5. `create_sip_trunk` with `host` = PBX LAN IP, `port`, `transport: "udp"`, `inboundAuthType`/`outboundAuthType: "registration"`, `username`, `password`. A private IP is routed through the edge device automatically (the only device, or the one on the PBX subnet; set `edgeDeviceId` if several match). It waits for the device and registers before returning.
 6. Disable **SIP ALG** at the site. Bidirectional UDP to the PBX IP is required (RTP uses dynamic ports; SIP 5060 alone is not enough).
 7. Health check is three separate signals: **Online**, **Tunnel: up**, **PBX: reachable** (ping only; can be false where SIP works). Never report "Online" as working.
 

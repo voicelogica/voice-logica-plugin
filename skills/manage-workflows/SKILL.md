@@ -14,7 +14,7 @@ The Workflows menu in the app is **admin role**. MCP workflow tools still follow
 Workflow CRUD and run:
 
 - `get_workflows` / `get_workflow`
-- `create_workflow` / `create_workflow_from_template` / `update_workflow` / `delete_workflow`
+- `create_workflow` / `create_workflow_from_template` (SMS link, email summary) / `create_api_lookup_workflow` / `create_webhook_workflow` / `update_workflow` / `delete_workflow`
 - `run_workflow` / `test_workflow`
 - `get_workflow_format` — node and trigger settings reference
 
