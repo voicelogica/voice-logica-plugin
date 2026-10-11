@@ -134,6 +134,8 @@ If the user says "I uploaded docs but the agent does not know", check assigned, 
 
 Do not put API keys or internal tool names in customer-facing prompt text.
 
+Callback number: the agent asks whether it is the number the caller is calling from, without saying it ("Να σας καλέσουμε στο τηλέφωνο από το οποίο μας καλείτε;"). A yes means `{{phone_number}}` and the agent moves on. Only a different number is taken down and read back. Reading the caller's own number back is slow and adds nothing.
+
 ## Prompt / analysis variables
 
 Two scopes with different names:
