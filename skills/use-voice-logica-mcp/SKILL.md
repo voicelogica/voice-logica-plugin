@@ -181,9 +181,9 @@ Skill: `manage-company-billing`.
 - `get_company_operating_hours` / `update_company_operating_hours`
 - `get_caller_card_settings` / `update_caller_card_settings` / `manage_caller_card_custom_link`
 - `get_mcp_settings` / `update_mcp_settings` (default trunk, agent, SMS sender, calendar)
-- `list_plans` / `upgrade_plan` (charges the saved card; confirm plan and price first)
+- `list_plans` / `upgrade_plan` (returns `checkoutUrl`: the user confirms and pays on the billing page, nothing is charged from chat)
 - `billing_query` (`get_subscription`, `list_add_ons`, `get_payment_method`, `get_low_balance_alert`) / `billing_execute` (`cancel_subscription`, `resume_subscription`, `set_company_vat`, `set_low_balance_alert`)
-- `team_query` (`list_company_users`, `list_invitations`, `get_seats`) / `team_execute` (`invite_member`, `revoke_invitation`, `set_user_seat`, `buy_seats`: charges the card, confirm first)
+- `team_query` (`list_company_users`, `list_invitations`, `get_seats`) / `team_execute` (`invite_member`, `revoke_invitation`, `set_user_seat`, `buy_seats`: returns `checkoutUrl` for the billing page, like `upgrade_plan`)
 - `query_user_action` / `execute_user_action` (members)
 - `list_tasks` / `create_task` / `complete_task`; `tasks_query` / `tasks_execute` (task settings)
 

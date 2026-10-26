@@ -115,7 +115,7 @@ Never put `"transferring"` in `endCallReasons` — the agent hangs up instead of
 
 ## Prompts vs knowledge files
 
-Keep the system prompt around 15,000 to 20,000 characters. Client-facing reason is stability and accuracy — never mention internal cost.
+Keep the system prompt around 15,000 to 20,000 characters: long prompts make the agent less stable and less accurate.
 
 ### Prompt over ~20k (exact support rule)
 

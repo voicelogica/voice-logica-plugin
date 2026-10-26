@@ -5,7 +5,7 @@ description: Manage the Voice Logica plan, add-ons, payment method, subscription
 
 # Manage company and billing
 
-Report what the API returns. Do not guess prices or invent plan names. Never mention Voice Logica internal costs or margins.
+Report what the API returns. Do not guess prices or invent plan names.
 
 ## MCP tools
 
@@ -13,7 +13,7 @@ Company:
 
 - `get_company_operating_hours` / `update_company_operating_hours`
 - `team_query` (actions `list_company_users`, `list_invitations`, `get_seats`)
-- `team_execute` (actions `invite_member`, `revoke_invitation`, `set_user_seat`, `request_company_access`, `buy_seats` — charges the card, confirm first)
+- `team_execute` (actions `invite_member`, `revoke_invitation`, `set_user_seat`, `request_company_access`, `buy_seats` — returns a billing page link, see Purchases)
 - `query_user_action` / `execute_user_action` for members
 - `get_caller_card_settings` / `update_caller_card_settings`
 - `get_mcp_settings` / `update_mcp_settings`
@@ -24,12 +24,20 @@ Staff-only tools are not in the public plugin.
 
 Billing:
 
-- `upgrade_plan`
 - `list_plans`
+- `upgrade_plan` — returns a billing page link, see Purchases
 - `billing_query` (actions `get_subscription`, `list_add_ons`, `get_payment_method`, `get_low_balance_alert`)
 - `billing_execute` (actions `cancel_subscription`, `resume_subscription`, `set_company_vat`, `set_low_balance_alert`)
 
 Any `<area>_query` called with no action lists that area's actions and inputs. Do that instead of guessing action names.
+
+## Purchases
+
+Nothing is paid from the chat. `upgrade_plan` and `team_execute` (action `buy_seats`) return `checkoutUrl`, a link to the Voice Logica billing page. The user opens it, reviews the price and confirms there; the page asks for the VAT number and a card when they are missing. Until then nothing is bought.
+
+Give the user the link as returned. Do not say the plan or seats are bought. When they say they are done, check with `billing_query` (action `get_subscription`) or `team_query` (action `get_seats`).
+
+Resellers buying for a client company pay from their prepaid credit balance, not a card: the first call returns `confirm_required` with the price and the balance after. Show that, and call again with `confirm: true` only after the user agrees.
 
 Refunds, credit notes, invoices → billing@voicelogica.ai. Do not promise amounts or timelines.
 
@@ -37,7 +45,7 @@ Refunds, credit notes, invoices → billing@voicelogica.ai. Do not promise amoun
 
 `companyId` on these tools is **admin / reseller only**.
 
-Normal users must omit it and operate on the current company. If a normal user passes another company's id, the call fails or hits the wrong tenant. If they need another company, use `team_execute` (action `request_company_access`), or `list_companies` / `switch_company` if they are admin / reseller / account manager.
+Normal users omit it and operate on their own company. The server refuses another company's id with an access-denied error, so do not retry with it. If they need another company, use `team_execute` (action `request_company_access`), or `list_companies` / `switch_company` if they are admin / reseller / account manager.
 
 ## Check the subscription before calling a feature missing
 
@@ -83,7 +91,10 @@ Hours also feed **Block transfer when company is closed** (`edit-voice-agents`).
 `billing_query` (action `get_subscription`) + `list_plans` + `billing_query` (action `list_add_ons`) + `billing_query` (action `get_payment_method`). Quote the API. Do not convert currencies or invent discounts.
 
 **"Upgrade the plan."**
-`list_plans` first. Show the current plan and the target. `upgrade_plan` only after the user confirms.
+`billing_query` (action `get_subscription`) and `list_plans`. Show the current plan and the options as a short table (name, price, minutes). When the user picks one, call `upgrade_plan` with its `planId` and hand over the `checkoutUrl`: they confirm and pay on the billing page. Afterwards check `get_subscription`.
+
+**"Buy more seats."**
+`team_query` (action `get_seats`) for the seat plans and prices. Then `team_execute` (action `buy_seats`) and hand over the `checkoutUrl`. Afterwards check `get_seats`.
 
 **"Switch company."** (admin / reseller / account manager)
 `list_companies`, match by name, `switch_company`. Then list agents on the new company so later edits hit the right tenant.
