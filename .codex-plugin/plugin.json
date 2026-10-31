@@ -1,6 +1,6 @@
 {
   "name": "voice-logica",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Manage Voice Logica AI phone agents, calls, campaigns, phone lines, knowledge, workflows, integrations, messaging, and support tickets from ChatGPT and Codex.",
   "author": {
     "name": "Voice Logica",
@@ -24,7 +24,7 @@
   "interface": {
     "displayName": "Voice Logica",
     "shortDescription": "Manage AI voice agents & calls",
-    "longDescription": "Voice Logica runs AI phone agents that answer and place business calls. Connect your Voice Logica account (sign in at app.voicelogica.ai, no API key needed) and manage it from chat.\n\nWhat you can do:\n- Create agents, edit their prompt, greeting, voice, languages, transfers and tools, then hear them in the browser or with a callback\n- Search calls with transcripts and summaries, see call statistics, and start single or bulk outbound calls\n- Run outbound campaigns: leads, scheduling, pause and resume, results and Excel reports\n- Add knowledge: FAQ entries, documents and website pages, and review what the agent learned from calls\n- Build workflows that run on call start or end, keywords, email or API calls\n- Set up phone lines: SIP trunks, numbers, inbound and outbound routes, office PBX connection\n- Manage contacts, company records, pipeline stages and notes\n- Connect CRM, e-shop, ERP, calendar and helpdesk integrations (HubSpot, Zoho, Salesforce, WooCommerce, Shopify, Google, Microsoft and more)\n- Send SMS, Viber and email, and connect messaging channels\n- Manage team members, operating hours, plan and billing, and open Voice Logica support tickets\n\nWho it is for: owners and staff of businesses that use Voice Logica for their phone lines.\n\nLimitations: it only reaches the Voice Logica company your account belongs to, and member permissions set in the app still apply. Platform staff tools are not included.",
+    "longDescription": "Voice Logica runs AI phone agents that answer and place business calls. Connect your Voice Logica account (sign in at app.voicelogica.ai, no API key needed) and manage it from chat.\n\nWhat you can do:\n- Create agents, edit their prompt, greeting, voice, languages, transfers and tools, then hear them in the browser or with a callback\n- Search calls with transcripts and summaries, see call statistics, and start single or bulk outbound calls\n- Run outbound campaigns: leads, scheduling, pause and resume, results and Excel reports\n- Add knowledge: FAQ entries, documents and website pages, and review what the agent learned from calls\n- Build workflows that run on call start or end, keywords, email or API calls\n- Set up phone lines: SIP trunks, numbers, inbound and outbound routes, office PBX connection\n- Manage contacts, company records, pipeline stages and notes\n- Connect CRM, e-shop, ERP, calendar and helpdesk integrations (HubSpot, Zoho, Salesforce, WooCommerce, Shopify, Google, Microsoft and more)\n- Send SMS, Viber and email, and connect messaging channels\n- Manage team members and operating hours, and open Voice Logica support tickets\n\nWho it is for: owners and staff of businesses that use Voice Logica for their phone lines.\n\nLimitations: it only reaches the Voice Logica company your account belongs to, and member permissions set in the app still apply. Platform staff tools are not included.",
     "developerName": "Voice Logica AI",
     "category": "Productivity",
     "capabilities": [
@@ -37,7 +37,7 @@
       "Manage contacts and CRM records",
       "Connect integrations",
       "Send SMS, Viber and email",
-      "Manage plan, team and support tickets"
+      "Manage team, opening hours and support tickets"
     ],
     "websiteURL": "https://voicelogica.ai",
     "supportURL": "https://docs.voicelogica.ai/support/",
@@ -62,25 +62,25 @@
               "description": "List the account's AI phone agents",
               "prompt": "List my Voice Logica agents.",
               "tools_triggered": "get_agents",
-              "expected_behavior": "Returns the agents of the test company with name, languages and which one is the default. No changes are made."
+              "expected_behavior": "Returns the test company's agent, \"Agent Of shopify test\" (English, UK), with its settings summary. No changes are made."
             },
             {
               "description": "Change an agent's greeting",
-              "prompt": "Change the greeting of my Reception agent to: Hello, thank you for calling Demo Dental, how can I help?",
+              "prompt": "Change the greeting of my agent to: Hello, thank you for calling Shopify Test, how can I help?",
               "tools_triggered": "get_agents, get_agent_settings, update_agent_settings",
-              "expected_behavior": "Finds the Reception agent, reads its welcome section, saves the new greeting, and confirms the text now in place."
+              "expected_behavior": "Finds \"Agent Of shopify test\", reads its welcome section, saves the new greeting, and confirms the text now in place."
             },
             {
               "description": "Summarise recent calls",
               "prompt": "Summarise my calls from the last 7 days and tell me the most common reasons people called.",
               "tools_triggered": "get_calls, get_call_statistics",
-              "expected_behavior": "Returns the call count and outcomes for the period and groups the call summaries into the main reasons, citing call dates. Says so plainly if there were no calls."
+              "expected_behavior": "Returns the call count and outcomes for the period and groups the call summaries into the main reasons (for example a quote request for tote bags, an invoice query), citing call dates. Says so plainly if there were no calls in the period."
             },
             {
               "description": "Add an FAQ answer to the agent's knowledge",
               "prompt": "Add this to my agent's knowledge: We are open Monday to Friday, 9:00 to 17:00, and closed on public holidays.",
               "tools_triggered": "list_knowledge_files, add_knowledge_entries",
-              "expected_behavior": "Adds a question and answer entry about opening hours to the agent's knowledge file and confirms it was saved. search_knowledge can then find it."
+              "expected_behavior": "Adds a question and answer entry about opening hours to the agent's knowledge file \"Shop FAQ\" and confirms it was saved. search_knowledge can then find it."
             },
             {
               "description": "Hear the agent without a phone call",
@@ -104,15 +104,15 @@
             }
           ]
         },
-        "commerce": true,
-        "commerce_description": "Users can change their own Voice Logica subscription plan (upgrade_plan) or buy extra device seats (team_execute buy_seats). The charge goes to the card already saved in their Voice Logica account through Stripe. With no card saved, the tool returns a secure Stripe page link instead of charging. No physical goods are sold."
+        "commerce": false,
+        "commerce_description": "The plugin does not sell anything. Plans and payments are handled only in the Voice Logica web app, not from chat."
       },
       "publication": {
-        "release_notes": "Updated to the current Voice Logica MCP: sign in with OAuth (no API key), grouped tools per area, SIP trunks and numbers instead of VoIP phones, agent settings by section, batch workflow edits, campaigns and leads, knowledge learning review, CRM records, messaging channels, and bundled skills for each area.",
+        "release_notes": "1.1.1: the sign-in window now opens on email and password (no emailed code), and the review test cases match the reviewer test account. Earlier: updated to the current Voice Logica MCP: sign in with OAuth (no API key), grouped tools per area, SIP trunks and numbers instead of VoIP phones, agent settings by section, batch workflow edits, campaigns and leads, knowledge learning review, CRM records, messaging channels, and bundled skills for each area.",
         "translations": {
           "el-GR": {
             "subtitle": "Φωνητικοί βοηθοί AI & κλήσεις",
-            "description": "Το Voice Logica λειτουργεί AI τηλεφωνικούς βοηθούς που απαντούν και πραγματοποιούν επαγγελματικές κλήσεις. Συνδέστε τον λογαριασμό σας στο Voice Logica (σύνδεση στο app.voicelogica.ai, χωρίς API key) και διαχειριστείτε τον από τη συνομιλία: βοηθούς, κλήσεις και καμπάνιες, γνωσιακή βάση, ροές εργασιών, τηλεφωνικές γραμμές, επαφές, ενσωματώσεις, SMS και Viber, ομάδα, συνδρομή και αιτήματα υποστήριξης.\n\nΗ πρόσβαση περιορίζεται στην εταιρεία του λογαριασμού σας και ισχύουν τα δικαιώματα μέλους της εφαρμογής."
+            "description": "Το Voice Logica λειτουργεί AI τηλεφωνικούς βοηθούς που απαντούν και πραγματοποιούν επαγγελματικές κλήσεις. Συνδέστε τον λογαριασμό σας στο Voice Logica (σύνδεση στο app.voicelogica.ai, χωρίς API key) και διαχειριστείτε τον από τη συνομιλία: βοηθούς, κλήσεις και καμπάνιες, γνωσιακή βάση, ροές εργασιών, τηλεφωνικές γραμμές, επαφές, ενσωματώσεις, SMS και Viber, ομάδα, ωράριο λειτουργίας και αιτήματα υποστήριξης.\n\nΗ πρόσβαση περιορίζεται στην εταιρεία του λογαριασμού σας και ισχύουν τα δικαιώματα μέλους της εφαρμογής."
           }
         }
       }
