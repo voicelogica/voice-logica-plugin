@@ -15,6 +15,7 @@ The default MCP is the hosted endpoint at https://api.voicelogica.ai/api/v1/mcp.
 - Send SMS or Viber and manage verified senders
 - Build workflows (call start/end, keywords, email, API) and assign them to agents
 - Review calls, SIP logs, outbound campaigns, and scheduled calls
+- Act on the instructions team members leave on calls (dictated after the call or typed), by hand or on a schedule
 - Generate and run test scenarios (treat scenario "succeeded" as a judge, not live truth)
 - Read plans, add-ons, payment method, and subscription; update operating hours
 - File and follow Voice Logica app support tickets
@@ -115,6 +116,7 @@ Same folder, several submissions. Listing on one store does not list you on the 
     skills/manage-calls-campaigns           Call logs, outbound, test scenarios
     skills/manage-company-billing           Companies, plans, operating hours
     skills/create-support-ticket            File a ticket in the Voice Logica app
+    skills/act-on-call-instructions         Act on instructions left on calls, mark them done
     skills/use-voice-logica-mcp             Full public MCP tool catalog
     assets/favicon.png            Marketplace icon (official)
     assets/logo.png               Wordmark

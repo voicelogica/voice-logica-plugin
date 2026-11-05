@@ -1,6 +1,6 @@
 ---
 name: manage-phones
-description: Set up Voice Logica phone lines: SIP trunks, numbers, inbound and outbound routes, office PBX connection, and edge devices, and assign numbers to AI agents. Use when the user asks about DIDs, SIP trunks, extensions, inbound numbers, registration, one-way audio, or why an agent has no phone.
+description: "Set up Voice Logica phone lines: SIP trunks, numbers, inbound and outbound routes, office PBX connection, and edge devices, and assign numbers to AI agents. Use when the user asks about DIDs, SIP trunks, extensions, inbound numbers, registration, one-way audio, or why an agent has no phone."
 ---
 
 # Manage Voice Logica phones

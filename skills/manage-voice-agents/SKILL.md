@@ -30,6 +30,7 @@ Use the Voice Logica MCP. Do not invent agent IDs, phone numbers, or API fields.
 - Freshdesk, Zendesk, Jira, couriers, payments: `manage-helpdesk-ops`
 - Workflows, triggers, nodes: `manage-workflows`
 - Call logs, outbound campaigns, test scenarios: `manage-calls-campaigns`
+- Instructions for AI left on calls (after-call notes), by hand or on a schedule: `act-on-call-instructions`
 - Companies, plans, operating hours: `manage-company-billing`
 - File a ticket in the Voice Logica app (Contact Support) with Call IDs: `create-support-ticket` — fallback https://docs.voicelogica.ai/support/
 - Full MCP tool catalog: `use-voice-logica-mcp`

@@ -1,6 +1,6 @@
 ---
 name: fix-agent-behavior
-description: Fix Voice Logica agent behavior on live calls: off-topic callers, too many questions, re-asks, wrong language, abrupt hangups, interruptions, misheard names, and wrong pronunciation. Use when a call went badly and the user wants the agent to behave differently.
+description: "Fix Voice Logica agent behavior on live calls: off-topic callers, too many questions, re-asks, wrong language, abrupt hangups, interruptions, misheard names, and wrong pronunciation. Use when a call went badly and the user wants the agent to behave differently."
 ---
 
 # Fix Voice Logica agent behavior
