@@ -11,7 +11,7 @@ Confirm the MCP is connected (Connect / OAuth to https://app.voicelogica.ai). Us
 
 ## 1. Find the open ones
 
-`get_calls` with `llmInstructionsStatus: "pending"` and `include: ["summary"]`, `limit` 10.
+`get_calls` with `llmInstructionsStatus: "pending"` and `include: ["summary"]`, `limit` 10. The filter returns only instructions nobody acted on yet, so this one call is the whole check.
 
 Each call returns `llmInstructions`:
 - `text`: what the team member asked, in their own words;
@@ -20,7 +20,9 @@ Each call returns `llmInstructions`:
 
 It also returns `summary`, `contactId`, `phoneNumber`, `userId` / `userName` and `startAt`.
 
-Nothing pending: say so in one line and stop. In a scheduled run, do nothing else.
+Nothing pending: say so in one line and stop. In a scheduled run, do nothing else: no other tool call, no task list. Most runs end here, and every extra step costs a full turn.
+
+Something pending: load every tool the jobs may need **in one go** (`update_call_llm_instructions`, `get_associate`, `list_contacts`, `messages_execute`, `send_call_follow_up`, `create_task`, `list_tasks`, `create_or_update_contact`), not one at a time. Work from the summary and the contact. Fetch a transcript only when they do not settle a detail, and then for all such calls at once (`get_calls` with `callIds` and `include: ["transcript"]`). Never fetch the same call twice.
 
 ## 2. For each call: do what the instructions say
 
@@ -30,6 +32,12 @@ Do exactly what the team member asked, with the tools you have. Do not wait for 
 2. **Do** it. Typical jobs:
    - Email the client: find the address (the call's contact, a connected CRM, the transcript). Write it in the language of the call, short and polite, with exactly the content asked for. Send it with `messages_execute` (action `send_email`, to the `contactId` so it is logged on the contact), or `send_call_follow_up` when it is the call summary or page.
    - SMS or Viber: `messages_execute` (`send_sms` / `send_viber`) to the call's `phoneNumber` or the contact's mobile.
+   - Use these inputs exactly; you do not need to look them up first:
+     - SMS: `messages_execute { action: "send_sms", input: { messages: [{ to: ["+3069…"], body: "…" }] } }`
+     - Viber: `messages_execute { action: "send_viber", input: { to: "+3069…", text: "…", smsFallback: true } }`
+     - Email: `messages_execute { action: "send_email", input: { messages: [{ to: ["name@example.com"], subject: "…", body: "…", contactId: "<the call's contactId>" }] } }`
+     - Phone numbers in E.164 (a Greek mobile `69…` becomes `+3069…`).
+   - Put independent steps of the same job (e.g. the SMS and the callback task) in the same turn.
    - A callback or a reminder: `create_task` with `assignedUserId` = `createdByUserId`, `contactId`, `sourceCallId` = the call's `id`, `kind: "callback"` for a call back, and `dueAt` when they named a time. Look at `list_tasks` first so you don't add a second one.
    - A meeting: the calendar tools, at the time they said (or the first free slot that matches it).
    - Remember something about the client: `create_or_update_contact` (pass `contactId`). For a connected CRM (HubSpot, Zoho, Salesforce…), use its integration tools (`list_integrations`, then `describe_integration`).
