@@ -1,6 +1,6 @@
 {
   "name": "voice-logica",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Manage Voice Logica AI phone agents, calls, campaigns, phone lines, knowledge, workflows, integrations, messaging, and support tickets from ChatGPT and Codex.",
   "author": {
     "name": "Voice Logica",
@@ -109,7 +109,7 @@
         "commerce_description": "The plugin does not sell anything. Plans and payments are handled only in the Voice Logica web app, not from chat."
       },
       "publication": {
-        "release_notes": "1.2.2: act-on-call-instructions is faster and cheaper: one call when nothing is pending, tools loaded in one go, and the exact SMS, Viber and email inputs so sends work first time. 1.2.1: act-on-call-instructions now carries out what the instructions say, sending the email or SMS to the client, and stops only when the recipient or a detail is unclear. 1.2.0: new skill act-on-call-instructions: handle the instructions team members leave on calls for an AI assistant (dictated right after the call or typed on the call), mark each one done, and run it on a schedule. 1.1.1: the sign-in window now opens on email and password (no emailed code), and the review test cases match the reviewer test account. Earlier: updated to the current Voice Logica MCP: sign in with OAuth (no API key), grouped tools per area, SIP trunks and numbers instead of VoIP phones, agent settings by section, batch workflow edits, campaigns and leads, knowledge learning review, CRM records, messaging channels, and bundled skills for each area.",
+        "release_notes": "1.2.3: act-on-call-instructions explains how to run the scheduled check on a small, cheap model and hand pending work to the strongest one. 1.2.2: act-on-call-instructions is faster and cheaper: one call when nothing is pending, tools loaded in one go, and the exact SMS, Viber and email inputs so sends work first time. 1.2.1: act-on-call-instructions now carries out what the instructions say, sending the email or SMS to the client, and stops only when the recipient or a detail is unclear. 1.2.0: new skill act-on-call-instructions: handle the instructions team members leave on calls for an AI assistant (dictated right after the call or typed on the call), mark each one done, and run it on a schedule. 1.1.1: the sign-in window now opens on email and password (no emailed code), and the review test cases match the reviewer test account. Earlier: updated to the current Voice Logica MCP: sign in with OAuth (no API key), grouped tools per area, SIP trunks and numbers instead of VoIP phones, agent settings by section, batch workflow edits, campaigns and leads, knowledge learning review, CRM records, messaging channels, and bundled skills for each area.",
         "translations": {
           "el-GR": {
             "subtitle": "Φωνητικοί βοηθοί AI & κλήσεις",
