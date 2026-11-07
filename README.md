@@ -71,7 +71,7 @@ Connect Voice Logica MCP if prompted. Then try /voice-logica:manage-voice-agents
 
 ### ChatGPT / Codex
 
-ChatGPT: turn on Developer mode (Settings, Security and login), open Plugins, click +, then either Upload plugin with https://docs.voicelogica.ai/downloads/voice-logica-plugin.zip or Create custom MCP server with `https://api.voicelogica.ai/api/v1/mcp` and OAuth. Codex can also load this folder as a local plugin.
+ChatGPT: turn on Developer mode (Settings, Security and login), open Plugins, click Browse directory, then Add → Add custom MCP server with `https://api.voicelogica.ai/api/v1/mcp` and OAuth (or Add → Upload plugin archive with https://docs.voicelogica.ai/downloads/voice-logica-plugin.zip). Codex can also load this folder as a local plugin.
 
 ### Gemini CLI
 
