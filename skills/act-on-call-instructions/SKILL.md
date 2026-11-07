@@ -73,4 +73,11 @@ Every 10 to 30 minutes is enough. The prompt for the scheduled run:
 
 Each run sees only the calls of the company the account belongs to, and the member's permissions in the app still apply.
 
+### Cheaper on a schedule: small model checks, strong model works
+
+Most runs find nothing pending, so the check is where the cost is. Run the scheduled check on your smallest, cheapest model and let it only look: `get_calls` with `llmInstructionsStatus: "pending"`. When nothing is pending it stops. When something is, it hands the work to your strongest model, which sends the emails and SMS and marks each instruction done. The small model never writes to the client itself.
+
+- **Claude Code / Claude desktop scheduled tasks**: set the task's model to Haiku (`model: claude-haiku-5-5` in the task's SKILL.md frontmatter). When something is pending, the check calls the Agent tool with `model: "opus"` and the prompt «Use the act-on-call-instructions skill: carry out the pending Voice Logica call instructions and mark each one done.» The subagent works in the background; the check waits for its report before it ends. Do not have the check start another scheduled task: unattended runs are not allowed to.
+- **Claude / ChatGPT tasks without subagents**: pick the cheapest model that can still follow this skill reliably, or run the task less often (every 20–30 minutes).
+
 Help: https://docs.voicelogica.ai/integrations/claude-calls-and-team/#instructions-for-ai-after-a-call
