@@ -18,6 +18,7 @@ Use the Voice Logica MCP. Do not invent agent IDs, phone numbers, or API fields.
 - Create / build / go-live a new agent: `edit-voice-agents`
 - Edit settings, prompts, languages, transfers, knowledge: `edit-voice-agents`
 - Prompt over ~20k / knowledge files / router+specialist: `edit-voice-agents`
+- Procedures (topic steps loaded only when needed: returns, account questions, complaints, bookings): `edit-voice-agents`
 - Call went badly / change how the agent behaves: `fix-agent-behavior`
 - Diagnose a failed call, missing tool, or "is it the model?": `troubleshoot-voice-agents`
 - DIDs, SIP trunks, inbound numbers, edge devices, registration, one-way audio: `manage-phones`

@@ -15,7 +15,7 @@ Write Greek literally in JSON-string parameters. `\uXXXX` escapes can drop lette
 
 Everyday work has its own tools. The rest of each area sits behind a pair: `<area>_query` reads and `<area>_execute` changes, with `{action, input}`. Call `<area>_query` **without an action** to list every action with its input. Never guess an action name.
 
-Areas: `agents`, `scenarios`, `versions`, `knowledge`, `leads`, `campaigns`, `messages`, `team`, `billing`, `calendar`, `tickets`, `tasks`, `pbx`, `eshop`, `crm`, `telephony`, `channels`, `integration`. Members: `query_user_action` / `execute_user_action`.
+Areas: `agents`, `procedures`, `scenarios`, `versions`, `knowledge`, `leads`, `campaigns`, `messages`, `team`, `billing`, `calendar`, `tickets`, `tasks`, `pbx`, `eshop`, `crm`, `telephony`, `channels`, `integration`. Members: `query_user_action` / `execute_user_action`.
 
 How-to questions: `get_guide` with the user's words (no arguments lists the guides), then `search_docs`.
 
@@ -30,6 +30,7 @@ When the person asks about **their own** tasks, callbacks, calls, extension or a
 | Not sure / list agents first | `manage-voice-agents` |
 | Create / build a new agent | `edit-voice-agents` |
 | Edit prompt, languages, transfers, knowledge | `edit-voice-agents` |
+| Procedures: topic steps the agent loads only when needed | `edit-voice-agents` |
 | Call behavior went wrong | `fix-agent-behavior` |
 | Diagnose with a Call ID | `troubleshoot-voice-agents` |
 | SIP trunks, numbers, routes, PBX, edge devices | `manage-phones` |
@@ -59,7 +60,16 @@ Skill: `edit-voice-agents` (behavior: `fix-agent-behavior`).
 
 Sections that hold lists (transfer, analysis, tools) are **replaced** on update: read the section first and resend every field.
 
-Prompt/analysis variables are **flat** (`{{phone_number}}`, `{{booked}}`). Workflow variables are **`call.`-prefixed**. `analysisPrompt` is interpolated. System prompt ideal 15–20k characters; above that use knowledge files, not a bigger prompt. See `edit-voice-agents`.
+Prompt/analysis variables are **flat** (`{{phone_number}}`, `{{booked}}`). Workflow variables are **`call.`-prefixed**. `analysisPrompt` is interpolated. System prompt ideal 15–20k characters; above that move facts to knowledge files and topic steps to procedures, not a bigger prompt. See `edit-voice-agents`.
+
+### Procedures
+
+Skill: `edit-voice-agents`. Company-level blocks of steps for one kind of request (returns, account questions, complaints, booking changes), attached to agents like workflows. The prompt keeps one line per procedure (key and trigger); the agent loads the steps mid-call with `load_procedure`. Steps: `get_guide` with `guide: "agent_procedures"`.
+
+- `procedures_query` (`list_procedures`, `get_procedure`, `split_prompt_into_procedures`, `list_procedure_revisions`, `list_procedure_presets`)
+- `procedures_execute` (`create_procedure`, `update_procedure`, `delete_procedure`, `duplicate_procedure`, `restore_procedure_revision`, `attach_procedures`, `detach_procedures`, `reorder_procedures`, `add_procedure_presets`)
+
+`attach_procedures`, `detach_procedures` and `add_procedure_presets` need `destination`: `"version"` (test first) or `"prod"` (live at once). `update_procedure` reaches every agent that uses the procedure.
 
 ### Agent tools (section `tools`)
 
