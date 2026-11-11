@@ -1,6 +1,6 @@
 ---
 name: edit-voice-agents
-description: Create and edit Voice Logica agent settings, prompts, knowledge files, transfers, and editor tabs. Use when the user wants to build a new agent, change a greeting, system prompt, languages, transfers, or cannot find a setting in the agent editor.
+description: Create and edit Voice Logica agent settings, prompts, procedures, knowledge files, transfers, and editor tabs. Use when the user wants to build a new agent, change a greeting, system prompt, languages, transfers, move topic steps (returns, account questions, complaints, bookings) into procedures, or cannot find a setting in the agent editor.
 ---
 
 # Edit Voice Logica agents
@@ -21,13 +21,14 @@ Order of operations:
 8. Transfers if needed — see below. Always read section `transfer` first.
 9. Tools: `get_agent_settings` / `update_agent_settings` section `tools`. Enable only what the flow needs. Company integrations are a separate step (`manage-integrations`).
 10. Knowledge: assign + enable; wait until embeddings are ready; then trim facts out of the prompt.
-11. Phone: `manage-phones`. An agent with no DID will not take inbound PSTN calls.
-12. `versions_execute` (action `save_agent_version`) after a working config.
-13. Test with a real call and a Call ID.
+11. Procedures: steps for one kind of request (returns, account questions, complaints, booking changes) go in procedures, not the prompt — see Procedures below.
+12. Phone: `manage-phones`. An agent with no DID will not take inbound PSTN calls.
+13. `versions_execute` (action `save_agent_version`) after a working config.
+14. Test with a real call and a Call ID.
 
 Limits (do not invent others): agent name 100 chars; description 500 (internal); tone 200. System prompt ideal 15,000–20,000 characters (plan feature `system-prompt` may block save). Knowledge Q&A: question ~200 chars, answer ~750; document mode subject 100 / content 2500. Split facts across many Q&As. Summary prompt 5000; transcription prompt 160; analysis prompt is plan `analysis-prompt`. Hold-sound upload 50 MB / trim ~60 s.
 
-If the prompt stays above ~20k after moving facts out, use a **router agent + specialist** (transfer / hand-off), not a bigger prompt.
+If the prompt stays above ~20k after moving facts to knowledge and topic steps to procedures, use a **router agent + specialist** (transfer / hand-off), not a bigger prompt.
 
 ## Find the setting
 
@@ -42,6 +43,7 @@ Many "missing setting" cases are view, role, or plan, not a missing feature.
 Where things live:
 
 - System prompt and identity: Details (Power View)
+- Steps for one kind of request, loaded only when needed: Procedures
 - Call forwarding / attended vs blind: Transfer Connection
 - Goodbye and end-call reasons: End Call
 - Post-call email: Analysis + Notifications
@@ -121,11 +123,11 @@ Keep the system prompt around 15,000 to 20,000 characters: long prompts make the
 
 1. Measure with `get_agent_prompt` (character count). Check `billing_query` (action `get_subscription`) — plans cap `system-prompt`.
 2. Keep in the prompt: role, conversation flow, transfer rules, hard constraints, tone, language, short examples.
-3. Move to knowledge files: prices, catalogs, addresses, hours, staff lists, long FAQs, policies, anything the agent should retrieve.
+3. Move to knowledge files: prices, catalogs, addresses, hours, staff lists, long FAQs, policies, anything the agent should retrieve. Move to procedures: sections of steps for one kind of request (see Procedures below).
 4. Create Q&As (question as a caller would ask + answer + alt questions). One fact family per entry. Greek callers → Greek questions and alt questions. Prefer many small Q&As over one blob.
 5. Assign the knowledge file to the agent **and enable it**. Upload alone is not enough. Wait until embeddings are ready.
 6. Trim the facts out of the prompt. Do **not** restate a rule that is already there — that eats `system-prompt` budget and does not fix a violated rule (`fix-agent-behavior`).
-7. If it is still ~20k+ after extraction (or 30k+), split **router agent + specialist** (transfer / hand-off). Do not grow one prompt.
+7. If it is still ~20k+ after moving facts and topic steps out (or 30k+), split **router agent + specialist** (transfer / hand-off). Do not grow one prompt.
 8. Test with a real Call ID.
 
 If save fails: hit plan `system-prompt`. If add-knowledge fails with `knowledge_questions_limit_reached`: plan `knowledge-questions` quota.
@@ -137,6 +139,44 @@ Do not put API keys or internal tool names in customer-facing prompt text.
 Callback number: the agent asks whether it is the number the caller is calling from, without saying it ("Να σας καλέσουμε στο τηλέφωνο από το οποίο μας καλείτε;"). A yes means `{{phone_number}}` and the agent moves on. Only a different number is taken down and read back. Reading the caller's own number back is slow and adds nothing.
 
 Welcome message: start with `{{greeting}}` (Καλημέρα before 12:00 / Καλησπέρα after, company time zone), then the agent's name as the company's digital assistant (Greek: company in the genitive), then one question. Open: «{{greeting}} σας. Είμαι η Δανάη, η ψηφιακή βοηθός του λογιστικού γραφείου PKP. Πώς θα μπορούσα να σας βοηθήσω;». Closed (`phoneFirstMessageOffHours`): same, plus «Αυτή τη στιγμή είμαστε κλειστά, αλλά πείτε μου πώς θα μπορούσα να σας βοηθήσω.». Set with `update_agent_settings` section `"welcome"`.
+
+## Procedures
+
+A procedure is a named block of steps for one kind of request. It belongs to the **company**, like a workflow: write it once, attach it to every agent that needs it. The prompt carries only one line per attached procedure (its key and trigger); the agent loads the steps mid-call with `load_procedure` when the caller's request matches.
+
+What goes where:
+
+- **Prompt**: who the agent is, tone, general rules, how to tell requests apart, transfer, closing.
+- **Procedure**: a section that handles one kind of request over several lines (returns, account questions, complaints, changing a booking, identity check).
+- **Knowledge**: facts the agent quotes (prices, hours, policies).
+
+Tools: `procedures_query` reads, `procedures_execute` changes, both with `{action, input}`. Call `procedures_query` without an action to list every action with its input. Steps: `get_guide` with `guide: "agent_procedures"`.
+
+Order of operations:
+
+1. `procedures_query` (action `list_procedures`) — reuse what the company has before writing a new one. With `agentId` it shows what that agent uses.
+2. Start from one of three:
+   - Presets: `list_procedure_presets`, then `procedures_execute` (action `add_procedure_presets`): `account_questions`, `product_returns`, `complaints`, `booking_change`, `verify_identity`. A key the company already has is reused, never overwritten. Edit the steps to how the business works.
+   - The current prompt: `split_prompt_into_procedures` lists each `====` section with a suggested key. It saves nothing; pick the topic sections with the user.
+   - Blank: `create_procedure` with `name`, `trigger`, `content`.
+3. `attach_procedures` with `destination`: `"version"` saves into a numbered version to test first, `"prod"` changes the live agent at once. Ask which when the user did not say.
+4. Delete each moved section from the prompt (`edit_agent_prompt`), with the same destination, so the agent does not get the same steps twice.
+5. Test: `run_agent_scenario` with `agentVersionId`. Each load shows in the call as a `load_procedure` tool row, so a scenario can expect it in `expectedToolCalls`. Then `versions_execute` (action `publish_agent_version`).
+
+Writing them:
+
+- **Trigger** is one line (max 200 characters) saying when it applies, worded the way callers ask ("Ο πελάτης θέλει να επιστρέψει προϊόν"). No `{{variables}}` in the trigger; the steps can use them. If the agent answers without loading the procedure, rewrite the trigger closer to the caller's words — do not add a rule to the prompt.
+- **Key** is lowercase letters, digits and `_`, unique in the company.
+- **Links**: write `@key` in the steps to point to another procedure ("first follow @verify_identity"). It loads even when not attached to that agent. Set `autoTrigger: false` on a procedure that should only be reached through a link. A link to a missing key, or a loop, is refused on save.
+- Limits per agent: 60 procedures, 6,000 characters for the trigger list; 12,000 characters of steps per procedure.
+
+Editing:
+
+- `update_procedure` changes it on **every agent that uses it**, from their next call. Read `usedBy` (`get_procedure`) and name those agents to the user before saving. Use `edits` (find/replace) or `append` for a small change; `content` replaces all the steps.
+- For one agent only: `duplicate_procedure`, then detach the shared one and attach the copy there.
+- Each save keeps the previous text: `list_procedure_revisions` (last 20), `restore_procedure_revision`.
+- `detach_procedures` removes it from one agent and keeps it for the company. `delete_procedure` is refused while an agent uses it unless `detachFromAgents: true`; list those agents and confirm with the user first.
+- A saved agent version stores which procedures it uses, not their text: an edit to a procedure reaches every version that uses it.
 
 ## Prompt / analysis variables
 
