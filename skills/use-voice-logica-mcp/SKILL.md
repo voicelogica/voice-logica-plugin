@@ -107,7 +107,7 @@ Skill: `manage-phones`. Private PBX: Edge Devices, WireGuard UDP 51820. Health =
 Skill: `manage-calls-campaigns`.
 
 - `get_calls` (add include `aiDialogue` for the turn-by-turn dialogue) / `get_call_statistics`
-- Instructions for AI a team member left on a call: `get_calls` with `llmInstructionsStatus: "pending"`, then `update_call_llm_instructions` (`done` with `result`, `dismiss`, `set`, `reopen`, `delete`). Skill: `act-on-call-instructions`.
+- Instructions for AI a team member left on a call: `get_calls` with `llmInstructionsStatus: "pending"`, then `update_call_llm_instructions` (`done` with `result`, `ask` with `text` when you need something from the team member first: they reply in Live Support → AI assistant and the call is pending again with the conversation in `llmInstructions.messages`; `dismiss`, `set`, `append`, `reopen`, `delete`). Skill: `act-on-call-instructions`.
 - `get_managed_agent_sessions` (tool and orchestration traces)
 - `initiate_call` / `initiate_bulk_calls` (1–50) / `assistant_call`
 - `set_call_recording` (pause or resume on the user's own live call)

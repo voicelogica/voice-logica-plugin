@@ -1,11 +1,13 @@
 ---
 name: act-on-call-instructions
-description: "Carry out the instructions team members leave on Voice Logica calls for an AI assistant (dictated on the phone right after the call, or typed on the call): send the email or SMS they asked for, create the task, book the meeting, update the contact, then mark each one done with what was done. Use when the user asks to check or handle call instructions or after-call notes, asks \"what did my team ask for after their calls\", or when this runs on a schedule as a routine."
+description: "Carry out the instructions team members leave on Voice Logica calls for an AI assistant (dictated on the phone right after the call, or typed on the call): send the email or SMS they asked for, create the task, book the meeting, update the contact, then mark each one done with what was done, or ask the team member when something is unclear (they reply in the app, in their chat with the AI assistant). Use when the user asks to check or handle call instructions or after-call notes, asks \"what did my team ask for after their calls\", or when this runs on a schedule as a routine."
 ---
 
 # Act on call instructions
 
 After a call, a team member can leave instructions for an AI assistant on it. They dictate them on the phone once the client hangs up (or after dialling `##` to end only the client's line), or type them on the call under **Instructions for AI**. Each one stays `pending` until an assistant acts on it. You are that assistant: the team member decides, you carry it out.
+
+What you write back on a call (what you did, or a question) shows to the team member in the app under **Live Support → AI assistant**, as a chat with you for that call. They reply there, and their reply comes back to you on the same call.
 
 Confirm the MCP is connected (Connect / OAuth to https://app.voicelogica.ai). Use an API key only if the client has no Connect flow. If `update_call_llm_instructions` or the `llmInstructionsStatus` filter of `get_calls` is missing, the connector was connected before they existed: disconnect and reconnect it.
 
@@ -16,7 +18,10 @@ Confirm the MCP is connected (Connect / OAuth to https://app.voicelogica.ai). Us
 Each call returns `llmInstructions`:
 - `text`: what the team member asked, in their own words;
 - `source`: `voice` (dictated) or `manual` (typed);
-- `createdByUserId`, `createdAt`.
+- `createdByUserId`, `createdAt`;
+- `messages`: the conversation about this call, oldest first: the instructions, any question you asked earlier (`kind: "question"`) and the team member's reply (`kind: "reply"`). When it has more than the instructions, read all of it: the reply is the answer you were waiting for.
+
+Calls where you asked and nobody replied yet are `waiting`, not `pending`: the filter leaves them out, so you never ask twice.
 
 It also returns `summary`, `contactId`, `phoneNumber`, `userId` / `userName` and `startAt`.
 
@@ -28,7 +33,7 @@ Something pending: load every tool the jobs may need **in one go** (`update_call
 
 Do exactly what the team member asked, with the tools you have. Do not wait for anyone's approval: that includes sending to the client.
 
-1. **Read** the instructions with the summary. Dictated text is a speech transcript: check names, numbers, amounts and addresses against the summary, the contact (`get_associate` / `list_contacts`) or, if still unsure, the transcript (`get_calls` with `callId` and `include: ["transcript"]`).
+1. **Read** the instructions with the summary, and the whole `messages` conversation when there is one: a reply to your earlier question settles that detail, so act on it. Dictated text is a speech transcript: check names, numbers, amounts and addresses against the summary, the contact (`get_associate` / `list_contacts`) or, if still unsure, the transcript (`get_calls` with `callId` and `include: ["transcript"]`).
 2. **Do** it. Typical jobs:
    - Email the client: find the address (the call's contact, a connected CRM, the transcript). Write it in the language of the call, short and polite, with exactly the content asked for. Send it with `messages_execute` (action `send_email`, to the `contactId` so it is logged on the contact), or `send_call_follow_up` when it is the call summary or page.
    - SMS or Viber: `messages_execute` (`send_sms` / `send_viber`) to the call's `phoneNumber` or the contact's mobile.
@@ -52,14 +57,20 @@ Only these stop you, and then you send nothing for that item:
 - a name, number, amount, date or address you would send is unclear in the dictation, and the summary, contact or transcript does not settle it;
 - no tool can do what they asked.
 
-Then `create_task` (assigned as above) that says exactly what is missing, with a ready draft when there is one. Do the rest of the instructions you safely can, and mark them `done` with a result that says what was done and what is waiting. Never leave an instruction pending: the next run would do it again.
+For the first two, ask the team member: `update_call_llm_instructions` with `callId`, `action: "ask"` and `text`, one clear question in their language that they can answer in a line, with the choices when you have them, e.g. «Ο Γιώργος έχει δύο email (giorgos@acme.gr, g.pap@gmail.com). Σε ποιο να στείλω την προσφορά;». Do first whatever part of the instructions you safely can, and say in the question what is already done. The call becomes `waiting`; when they reply it is `pending` again and a later run finds it with the reply in `messages`. Then finish the job and mark it `done`.
+
+- Ask once per open point. If `messages` already holds your question and their reply, do not ask the same thing again: act on the reply, or, if it still does not settle it, `create_task` for them with what is missing and mark the call `done` with a result that says so.
+- When no tool can do what they asked, a question does not help: `create_task` (assigned as above) that says what they asked and why it could not be done, and mark the call `done` with a result that says so.
+- If `action: "ask"` is refused as an unknown action, the connector is older than this skill: `create_task` with what is missing instead, and mark the call `done`.
+
+Never leave an instruction pending: mark it `done`, `dismiss` it or `ask`. The next run would do a pending one again.
 
 ## Rules
 
-- Mark every call you handled, so no run handles it twice. Do not change instructions that are `done` or `dismissed` unless the user asks (`action: "reopen"`).
+- Mark every call you handled (`done`, `dismiss` or `ask`), so no run handles it twice. Do not change instructions that are `done`, `dismissed` or `waiting` unless the user asks (`action: "reopen"`).
 - Never invent IDs, numbers, prices or dates.
 - Do not paste transcripts or phone numbers into tasks or results beyond what the job needs.
-- One short report at the end: how many instructions you handled, and one line for each (call, client, what you did, what you sent and to whom).
+- One short report at the end: how many instructions you handled, and one line for each (call, client, what you did, what you sent and to whom, or what you asked).
 
 ## Run it on its own
 
@@ -75,7 +86,7 @@ Each run sees only the calls of the company the account belongs to, and the memb
 
 ### Cheaper on a schedule: small model checks, strong model works
 
-Most runs find nothing pending, so the check is where the cost is. Run the scheduled check on your smallest, cheapest model and let it only look: `get_calls` with `llmInstructionsStatus: "pending"`. When nothing is pending it stops. When something is, it hands the work to your strongest model, which sends the emails and SMS and marks each instruction done. The small model never writes to the client itself.
+Most runs find nothing pending, so the check is where the cost is. Run the scheduled check on your smallest, cheapest model and let it only look: `get_calls` with `llmInstructionsStatus: "pending"`. When nothing is pending it stops. When something is, it hands the work to your strongest model, which sends the emails and SMS and marks each instruction done, or asks the team member. The small model never writes to the client itself.
 
 - **Claude Code / Claude desktop scheduled tasks**: set the task's model to Haiku (`model: claude-haiku-5-5` in the task's SKILL.md frontmatter). When something is pending, the check calls the Agent tool with `model: "opus"` and the prompt «Use the act-on-call-instructions skill: carry out the pending Voice Logica call instructions and mark each one done.» The subagent works in the background; the check waits for its report before it ends. Do not have the check start another scheduled task: unattended runs are not allowed to.
 - **Claude / ChatGPT tasks without subagents**: pick the cheapest model that can still follow this skill reliably, or run the task less often (every 20–30 minutes).
