@@ -44,7 +44,12 @@ Do exactly what the team member asked, with the tools you have. Do not wait for 
      - Phone numbers in E.164 (a Greek mobile `69…` becomes `+3069…`).
    - Put independent steps of the same job (e.g. the SMS and the callback task) in the same turn.
    - A callback or a reminder: `create_task` with `assignedUserId` = `createdByUserId`, `contactId`, `sourceCallId` = the call's `id`, `kind: "callback"` for a call back, and `dueAt` when they named a time. Look at `list_tasks` first so you don't add a second one.
-   - A meeting: the calendar tools, at the time they said (or the first free slot that matches it).
+   - A meeting: the calendar tools, at the time they said (or the first free slot that matches it). The end time, in this order:
+     1. the end time in the instructions;
+     2. else the slot agreed on the call: look for a range in the summary, then in the transcript. Dictation garbles ranges: «10 με 12», «10-12», or a "10:12" whose minutes read as an hour all mean 10:00–12:00;
+     3. else a length someone stated («μισή ώρα», «an hour»);
+     4. else 30 minutes, and say in the `done` result that the length is your default.
+     When the call agreed a slot and also said the talk itself is shorter, book the agreed slot: that is the time the other side holds free.
    - Remember something about the client: `create_or_update_contact` (pass `contactId`). For a connected CRM (HubSpot, Zoho, Salesforce…), use its integration tools (`list_integrations`, then `describe_integration`).
    - Anything else they ask that a Voice Logica tool can do.
 3. **Mark it.** `update_call_llm_instructions` with `callId`, `action: "done"` and `result`. The result is one or two lines in the language of the instructions, saying exactly what you did, e.g. «Στάλθηκε email στο giorgos@example.com με την προσφορά. Εργασία επανάκλησης για τη Μαρία, Τρίτη 10:00.».
