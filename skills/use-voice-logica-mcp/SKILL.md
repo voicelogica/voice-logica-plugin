@@ -5,7 +5,7 @@ description: Master catalog of every Voice Logica MCP tool, grouped by job, with
 
 # What a user can do with the Voice Logica MCP
 
-This is the full public catalog. Confirm the MCP is connected (Connect / OAuth to https://app.voicelogica.ai; API key only if the client has no Connect flow), list agents if the job is about an agent, then open the specialist skill. Do not invent IDs, fields, or MCP tool names.
+This is the full public catalog. Confirm the MCP is connected. If the Voice Logica tools are missing, the connection is not signed in yet, and only the app can start that sign-in, so tell the user where to press Connect: ChatGPT: Plugins, Voice Logica, MCP servers, Connect on voice-logica, then a new chat; Claude: Customize, Connectors, Voice Logica, Connect; Cursor: Settings, MCP, voice-logica, Needs login. They sign in with their Voice Logica account in the window that opens. That Connect button is the only way in: signing in on app.voicelogica.ai by itself leaves the chat unconnected. Use an API key only if the client has no Connect flow. Then list agents if the job is about an agent, then open the specialist skill. Do not invent IDs, fields, or MCP tool names.
 
 Never commit or paste live API keys, OAuth tokens, or sender tokens into chat or git.
 

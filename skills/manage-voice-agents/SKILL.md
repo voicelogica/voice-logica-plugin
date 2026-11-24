@@ -9,7 +9,7 @@ Use the Voice Logica MCP. Do not invent agent IDs, phone numbers, or API fields.
 
 ## Before anything else
 
-1. Confirm the MCP is connected. If tools fail because MCP is not connected, tell the user to Connect Voice Logica MCP (OAuth to https://app.voicelogica.ai). Use an API key only if the client has no Connect flow.
+1. Confirm the MCP is connected. If the Voice Logica tools are missing, the connection is not signed in yet, and only the app can start that sign-in, so tell the user where to press Connect: ChatGPT: Plugins, Voice Logica, MCP servers, Connect on voice-logica, then a new chat; Claude: Customize, Connectors, Voice Logica, Connect; Cursor: Settings, MCP, voice-logica, Needs login. They sign in with their Voice Logica account in the window that opens. That Connect button is the only way in: signing in on app.voicelogica.ai by itself leaves the chat unconnected. Use an API key only if the client has no Connect flow.
 2. List current agents first when the user names an agent. Match by name, then use the real ID.
 3. Open the specialist skill for the job. Do not do a deep edit, diagnosis, or integration change from this router.
 
