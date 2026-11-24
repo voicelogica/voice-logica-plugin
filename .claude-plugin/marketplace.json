@@ -12,7 +12,7 @@
       "name": "voice-logica",
       "source": "./",
       "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets from Claude Code.",
-      "version": "1.3.7",
+      "version": "1.3.8",
       "category": "productivity",
       "homepage": "https://voicelogica.ai"
     }
