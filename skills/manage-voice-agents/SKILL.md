@@ -1,6 +1,6 @@
 ---
 name: manage-voice-agents
-description: Route Voice Logica work to the right specialist skill after confirming MCP is connected and listing agents. Use when the user wants to create or configure agents, phones, transfers, integrations, calls, billing, tickets, or is unsure which Voice Logica skill to use.
+description: 'Start here for any Voice Logica request, including "Set up my phone agent". If the Voice Logica tools (get_onboarding_flow, get_agents) are not in this chat, it is not connected yet, so the whole reply is how to connect (the website alone cannot connect the chat). In ChatGPT, Plugins, Voice Logica, MCP servers, Connect, then a new chat. In Claude, Customize, Connectors, Voice Logica, Connect. Existing account, sign in with it; new, Email me a code, then Create account & connect. Once connected, call get_onboarding_flow for setup, or route to the specialist skill for agents, phones, transfers, integrations, calls, billing or tickets.'
 ---
 
 # Manage Voice Logica agents
