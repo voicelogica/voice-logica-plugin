@@ -1,6 +1,6 @@
 ---
 name: manage-voice-agents
-description: Route Voice Logica work to the right specialist skill after confirming MCP is connected and listing agents. Use when the user wants to create or configure agents, phones, transfers, integrations, calls, billing, tickets, or is unsure which Voice Logica skill to use.
+description: 'Start here for any Voice Logica request, including "Help me set up a voice agent for my business". If the Voice Logica tools (get_onboarding_flow, get_agents) are not in this chat, it is not connected yet, so the whole reply is how to connect (the website alone cannot connect the chat). In ChatGPT, Plugins, Voice Logica, MCP servers, Connect, then a new chat. In Claude, Customize, Connectors, Voice Logica, Connect. Existing account, sign in with it; new, Email me a code, then Create account & connect. Once connected, call get_onboarding_flow for setup, or route to the specialist skill for agents, phones, transfers, integrations, calls, billing or tickets.'
 ---
 
 # Manage Voice Logica agents
@@ -9,13 +9,13 @@ Use the Voice Logica MCP. Do not invent agent IDs, phone numbers, or API fields.
 
 ## Before anything else
 
-1. Confirm the MCP is connected. If the Voice Logica tools are missing, the connection is not signed in yet, and only the app can start that sign-in, so tell the user where to press Connect: ChatGPT: Plugins, Voice Logica, MCP servers, Connect on voice-logica, then a new chat; Claude: Customize, Connectors, Voice Logica, Connect; Cursor: Settings, MCP, voice-logica, Needs login. In the window that opens, someone who already has a Voice Logica account signs in with it (email and password, Google or Microsoft); someone new presses "New here or no password? Email me a code", enters the code and finishes with "Create account & connect". Tell them both, since you do not know yet which one they are. That Connect button is the only way in: signing in on app.voicelogica.ai by itself leaves the chat unconnected. Use an API key only if the client has no Connect flow.
+1. Confirm the MCP is connected. If the Voice Logica tools are missing, the connection is not signed in yet, and only the app can start that sign-in, so tell the user where to press Connect: ChatGPT: Plugins, Voice Logica, MCP servers, Connect on voice-logica, then a new chat; Claude: Customize, Connectors, Voice Logica, Connect; Claude Code: type /mcp, pick voice-logica and sign in; Cursor: Settings, Tools & MCP, voice-logica. In the window that opens, someone who already has a Voice Logica account signs in with it (email and password, Google or Microsoft); someone new presses "New here or no password? Email me a code", enters the code and finishes with "Create account & connect". Tell them both, since you do not know yet which one they are. That Connect button is the only way in: signing in on app.voicelogica.ai by itself leaves the chat unconnected. Use an API key only if the client has no Connect flow.
 2. List current agents first when the user names an agent. Match by name, then use the real ID.
 3. Open the specialist skill for the job. Do not do a deep edit, diagnosis, or integration change from this router.
 
 ## Getting started
 
-When the user asks to set up their phone agent, get started, or has just connected, call `get_onboarding_flow` and follow its next step: the setup questions one at a time, a test call (`call_me`, `test_in_browser` or the agent's dial-in number; `wait_for_test_call` reports how it went), then how it sounded. Record each step with `record_onboarding_step`. Use `edit-voice-agents` for the build itself.
+When the user asks for help setting up a voice agent for their business, to set up their phone agent or get started, or has just connected, call `get_onboarding_flow` and follow its next step: the setup questions one at a time, a test call (`call_me`, `test_in_browser` or the agent's dial-in number; `wait_for_test_call` reports how it went), then how it sounded. Record each step with `record_onboarding_step`. Use `edit-voice-agents` for the build itself. The page to give the user is https://docs.voicelogica.ai/getting-started/set-up-from-chatgpt-or-claude/.
 
 ## Route to the right skill
 
