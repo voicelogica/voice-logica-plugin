@@ -13,6 +13,10 @@ Use the Voice Logica MCP. Do not invent agent IDs, phone numbers, or API fields.
 2. List current agents first when the user names an agent. Match by name, then use the real ID.
 3. Open the specialist skill for the job. Do not do a deep edit, diagnosis, or integration change from this router.
 
+## Getting started
+
+When the user asks to set up their phone agent, get started, or has just connected, call `get_onboarding_flow` and follow its next step: the setup questions one at a time, a test call (`call_me`, `test_in_browser` or the agent's dial-in number; `wait_for_test_call` reports how it went), then how it sounded. Record each step with `record_onboarding_step`. Use `edit-voice-agents` for the build itself.
+
 ## Route to the right skill
 
 - Create / build / go-live a new agent: `edit-voice-agents`
