@@ -1,7 +1,7 @@
 {
   "name": "voice-logica",
   "displayName": "Voice Logica",
-  "version": "1.3.6",
+  "version": "1.3.7",
   "description": "Manage Voice Logica AI voice agents, phones, calls, workflows, integrations, SMS, and support tickets from Claude Code.",
   "author": {
     "name": "Voice Logica",
