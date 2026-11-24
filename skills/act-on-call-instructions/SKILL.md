@@ -27,20 +27,27 @@ It also returns `summary`, `contactId`, `phoneNumber`, `userId` / `userName` and
 
 Nothing pending: say so in one line and stop. In a scheduled run, do nothing else: no other tool call, no task list. Most runs end here, and every extra step costs a full turn.
 
-Something pending: load every tool the jobs may need **in one go** (`update_call_llm_instructions`, `get_associate`, `list_contacts`, `messages_execute`, `send_call_follow_up`, `create_task`, `list_tasks`, `create_or_update_contact`), not one at a time. Work from the summary and the contact. Fetch a transcript only when they do not settle a detail, and then for all such calls at once (`get_calls` with `callIds` and `include: ["transcript"]`). Never fetch the same call twice.
+Something pending: load every tool the jobs may need **in one go** (`update_call_llm_instructions`, `get_associate`, `list_contacts`, `messages_execute`, `send_call_follow_up`, `create_task`, `list_tasks`, `create_or_update_contact`, `search_docs`, `get_guide`, `search_knowledge`), not one at a time. Work from the summary and the contact. Fetch a transcript only when they do not settle a detail, and then for all such calls at once (`get_calls` with `callIds` and `include: ["transcript"]`). Never fetch the same call twice.
 
 ## 2. For each call: do what the instructions say
 
 Do exactly what the team member asked, with the tools you have. Do not wait for anyone's approval: that includes sending to the client.
 
 1. **Read** the instructions with the summary, and the whole `messages` conversation when there is one: a reply to your earlier question settles that detail, so act on it. Dictated text is a speech transcript: check names, numbers, amounts and addresses against the summary, the contact (`get_associate` / `list_contacts`) or, if still unsure, the transcript (`get_calls` with `callId` and `include: ["transcript"]`).
+   - **Read what they meant, not the letters.** A name, company or product in the dictation that matches nobody is almost always a mishearing of something on the call: first the call's own client and their company (e.g. «στείλ' το στο yuboto» on a call with Youbath means Youbath), then our own products («νόημα» is Noema, the Voice Logica mobile app). Act on that reading and say it in the result. Never search for the literal word and then ask which of its matches they meant.
+   - Short dictation leans on the call: «φτιάξε ένα email για την προσφορά» after a call where the client asked «στείλε μου τα σε ένα email» means: email the client what was discussed. The transcript is where you find what they asked to receive.
 2. **Do** it. Typical jobs:
-   - Email the client: find the address (the call's contact, a connected CRM, the transcript). Write it in the language of the call, short and polite, with exactly the content asked for. Send it with `messages_execute` (action `send_email`, to the `contactId` so it is logged on the contact), or `send_call_follow_up` when it is the call summary or page.
+   - Email the client:
+     - **Who:** the person on the call, unless the instructions name someone else. Their address: the call's contact (`get_associate` returns `mainEmail` and `emails`), else `list_contacts` with the call's phone number, else a connected CRM, else the transcript. Several contacts on the same number: the call's own `contactId` wins. Several addresses on it: its `mainEmail`. This is settled, not a question for the team member.
+     - **What:** what was discussed and what the client asked to receive. «Προσφορά», «τα στοιχεία», «αυτά που είπαμε» mean the proposal or solution discussed on the call, not necessarily a price. Product facts (what Noema or another Voice Logica feature does, how to set it up, plans) come from `search_docs` / `get_guide` / `search_knowledge`, with the links. A price goes in only when it was said on the call, in the instructions or in our own docs; otherwise leave it out, never ask for one.
+     - **How:** in the language of the call, short and polite, signed by the team member (`userName`). Send it with `messages_execute` (action `send_email`, with the `contactId` so it is logged on the contact), or `send_call_follow_up` when it is the call summary or page.
+     - **Draft:** when they say draft («κάνε draft», «πρόχειρο», «να το δω πρώτα»), save it in their mailbox with `send_email` and `draft: true` instead of sending: it waits in Drafts for them to read and send. A task with the text is not a draft. Only when `draft: true` is refused (no mailbox) put the text in a task and say why.
    - SMS or Viber: `messages_execute` (`send_sms` / `send_viber`) to the call's `phoneNumber` or the contact's mobile.
    - Use these inputs exactly; you do not need to look them up first:
      - SMS: `messages_execute { action: "send_sms", input: { messages: [{ to: ["+3069…"], body: "…" }] } }`
      - Viber: `messages_execute { action: "send_viber", input: { to: "+3069…", text: "…", smsFallback: true } }`
      - Email: `messages_execute { action: "send_email", input: { messages: [{ to: ["name@example.com"], subject: "…", body: "…", contactId: "<the call's contactId>" }] } }`
+     - Email draft (not sent): `messages_execute { action: "send_email", input: { draft: true, messages: [{ to: ["name@example.com"], subject: "…", body: "…", contactId: "<the call's contactId>" }] } }`
      - Phone numbers in E.164 (a Greek mobile `69…` becomes `+3069…`).
    - Put independent steps of the same job (e.g. the SMS and the callback task) in the same turn.
    - A callback or a reminder: `create_task` with `assignedUserId` = `createdByUserId`, `contactId`, `sourceCallId` = the call's `id`, `kind: "callback"` for a call back, and `dueAt` when they named a time. Look at `list_tasks` first so you don't add a second one.
@@ -57,14 +64,16 @@ Do exactly what the team member asked, with the tools you have. Do not wait for 
 
 ## When you must not guess
 
-Only these stop you, and then you send nothing for that item:
-- you cannot tell who the recipient is, or there is no email or phone for them;
-- a name, number, amount, date or address you would send is unclear in the dictation, and the summary, contact or transcript does not settle it;
+A reading the call makes likely is not a guess: the client on the call as the recipient, their contact's email, a misheard name that sounds like the client or our product, the content the client asked for on the call. Act on it and say in the `done` result what you took it to mean. Only these stop you, and then you send nothing for that item:
+- the recipient is not the person on the call and you cannot tell who it is, or there is no email or phone for them;
+- a number, amount, date or address you would send is unclear in the dictation, and the summary, contact or transcript does not settle it;
 - no tool can do what they asked.
+
+Never ask for something they did not ask you to include (a price, terms, a signature). One question, about the one thing that blocks you, and do everything else first.
 
 For the first two, ask the team member: `update_call_llm_instructions` with `callId`, `action: "ask"` and `text`, one clear question in their language that they can answer in a line, with the choices when you have them, e.g. «Ο Γιώργος έχει δύο email (giorgos@acme.gr, g.pap@gmail.com). Σε ποιο να στείλω την προσφορά;». Do first whatever part of the instructions you safely can, and say in the question what is already done. The call becomes `waiting`; when they reply it is `pending` again and a later run finds it with the reply in `messages`. Then finish the job and mark it `done`.
 
-- Ask once per open point. If `messages` already holds your question and their reply, do not ask the same thing again: act on the reply, or, if it still does not settle it, `create_task` for them with what is missing and mark the call `done` with a result that says so.
+- Ask once per open point. If `messages` already holds your question and their reply, do not ask the same thing again: act on the reply and finish the whole job (send, or save the draft) in that turn. A reply that corrects you («δεν έχει σχέση η yuboto», «είναι από Youbath») is an instruction: read the call again with it and do the job. Only if it still does not settle who to send to, `create_task` for them with what is missing and mark the call `done` with a result that says so.
 - When no tool can do what they asked, a question does not help: `create_task` (assigned as above) that says what they asked and why it could not be done, and mark the call `done` with a result that says so.
 - If `action: "ask"` is refused as an unknown action, the connector is older than this skill: `create_task` with what is missing instead, and mark the call `done`.
 
