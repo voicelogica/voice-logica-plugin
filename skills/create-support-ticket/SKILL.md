@@ -7,7 +7,7 @@ description: Create a Voice Logica support ticket in the Voice Logica app when t
 
 File it in the **Voice Logica app** (Contact Support) through MCP. These are not Freshdesk / Zendesk tickets (`manage-helpdesk-ops`) and not mailbox email.
 
-Confirm the MCP is connected (Connect / OAuth to https://app.voicelogica.ai). Use an API key only if the client has no Connect flow.
+Confirm the MCP is connected. If the Voice Logica tools are missing, the connection is not signed in yet, and only the app can start that sign-in, so tell the user where to press Connect: ChatGPT: Plugins, Voice Logica, MCP servers, Connect on voice-logica, then a new chat; Claude: Customize, Connectors, Voice Logica, Connect; Cursor: Settings, MCP, voice-logica, Needs login. They sign in with their Voice Logica account in the window that opens. That Connect button is the only way in: signing in on app.voicelogica.ai by itself leaves the chat unconnected. Use an API key only if the client has no Connect flow.
 
 ## When to file
 

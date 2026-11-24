@@ -9,7 +9,7 @@ After a call, a team member can leave instructions for an AI assistant on it. Th
 
 What you write back on a call (what you did, or a question) shows to the team member in the app under **Live Support → AI assistant**, as a chat with you for that call. They reply there, and their reply comes back to you on the same call.
 
-Confirm the MCP is connected (Connect / OAuth to https://app.voicelogica.ai). Use an API key only if the client has no Connect flow. If `update_call_llm_instructions` or the `llmInstructionsStatus` filter of `get_calls` is missing, the connector was connected before they existed: disconnect and reconnect it.
+Confirm the MCP is connected. If the Voice Logica tools are missing, the connection is not signed in yet, and only the app can start that sign-in, so tell the user where to press Connect: ChatGPT: Plugins, Voice Logica, MCP servers, Connect on voice-logica, then a new chat; Claude: Customize, Connectors, Voice Logica, Connect; Cursor: Settings, MCP, voice-logica, Needs login. They sign in with their Voice Logica account in the window that opens. That Connect button is the only way in: signing in on app.voicelogica.ai by itself leaves the chat unconnected. Use an API key only if the client has no Connect flow. If `update_call_llm_instructions` or the `llmInstructionsStatus` filter of `get_calls` is missing, the connector was connected before they existed: disconnect and reconnect it.
 
 ## 1. Find the open ones
 
