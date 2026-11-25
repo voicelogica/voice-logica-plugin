@@ -102,6 +102,8 @@ Work this tree in order. Registration up is not the same as audio working.
 
 Do not rewrite the prompt for a registration or RTP failure.
 
+**Team member phone or softphone on a Voice Logica line stays offline on a Cosmote (Telekom) connection.** Cosmote's network sometimes blocks SIP over UDP. With the details already checked, have them switch the account's transport from UDP to **TCP** (same port 5060) in MicroSIP (▾ → Edit Account → Transport), Linphone, Zoiper or the desk phone's SIP settings. This is only for devices that register on Voice Logica; a Cosmote business SIP trunk stays on UDP. Guide: https://docs.voicelogica.ai/telephony/setup-sip-phone/#faq-sip-cosmote-tcp
+
 **Each outbound agent needs its own extension** (or port). Do not put two outbound agents on the same SIP extension. See `manage-calls-campaigns`.
 
 ## After a change
